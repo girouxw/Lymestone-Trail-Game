@@ -13,7 +13,7 @@ class Item
 {
 public:
     std::string itemName;
-    double quantity;
+    int quantity;
     std::vector<int> price;
     std::string description;
 

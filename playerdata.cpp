@@ -89,10 +89,6 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
             {
             case 1:
                 return true;
-            case 2:
-                g.clear();
-                shop(g, startingShop, startingShopDesc);
-                break;
             case 3:
                 companionNames[0] = "";
                 companionNames[1] = "";
@@ -159,21 +155,25 @@ void PlayerData::selectDifficulty(mssm::Graphics& g)
                 if (kingsHighwayDiff.isButtonPressed(e))
                 {
                     difficulty = 0;
+                    money = {100,0,0,0};
                     return;
                 }
                 if (aristocraftDiff.isButtonPressed(e))
                 {
                     difficulty = 1;
+                    money = {50,0,0,0};
                     return;
                 }
                 if (villaniDiff.isButtonPressed(e))
                 {
                     difficulty = 2;
+                    money = {10,0,0,0};
                     return;
                 }
                 if (poorPeasantDiff.isButtonPressed(e))
                 {
                     difficulty = 3;
+                    money = {1,0,0,0};
                     return;
                 }
             }
@@ -490,8 +490,14 @@ int getNumber(Graphics& g, double x, double y, double size)
 
 void PlayerData::shop(mssm::Graphics& g, std::vector<Item>& shopInventory, std::string shopDesc)
 {
+    g.clear();
     g.text(15,18,18,shopDesc,WHITE);
-    g.line(g.width()/2,0,g.width()/2,g.height(), WHITE);
+    g.line(505,0,505,570, WHITE);
+    g.polygon({{10,570},{970,570},{970,670},{10,670}}, WHITE, TRANSPARENT);
+    g.polygon({{970,0},{g.width(), 0},{g.width(), 670},{970, 670}}, BLACK, BLACK);
+    g.polygon({{10,670},{g.width(),670},{g.height(),g.width()},{10, g.height()}}, BLACK, BLACK);
+    g.line(10,570,10,0, WHITE);
+    g.line(970,570,970,0,WHITE);
 
     for(unsigned int i = 0; i<shopInventory.size(); i++)
     {
@@ -607,6 +613,54 @@ void PlayerData::shop(mssm::Graphics& g, std::vector<Item>& shopInventory, std::
 
 }
 
+void drawHUDs(Graphics& g)
+{
+    g.polygon({{10,570},{970,570},{970,670},{10,670}}, WHITE, BLACK);
+    g.polygon({{970,0},{g.width(), 0},{g.width(), 670},{970, 670}}, BLACK, BLACK);
+    g.polygon({{10,670},{g.width(),670},{g.height(),g.width()},{10, g.height()}}, BLACK, BLACK);
+    g.line(10,570,10,0, WHITE);
+    g.line(970,570,970,0,WHITE);
+    return;
+}
+
+bool PlayerData::checkInventory(mssm::Graphics& g)
+{
+    Button back = {{830,20},{950,80}};
+
+    g.clear();
+    drawHUDs(g);
+    back.draw(g, "Back",15);
+
+    for(unsigned int i = 0; i<inventory.size(); i++)
+    {
+        string num = to_string(inventory[i].quantity);
+        num.append(" .......... ");
+        num.append(inventory[i].itemName);
+
+        g.text(15,55 + (42*i),18, num,WHITE);
+    }
+
+    while(g.draw())
+    {
+        for(const Event& e : g.events())
+        {
+            if(e.evtType == EvtType::MousePress)
+            {
+                if (e.arg == 16777216)
+                {
+                    g.setCloseOnExit(true);
+                    return false;
+                }
+                if (back.isButtonPressed(e))
+                {
+                    return true;
+                }
+            }
+        }
+
+    }
+
+}
 
 void PlayerData::buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, int i, string shopDesc)
 {
@@ -672,6 +726,12 @@ void PlayerData::buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, in
 
     g.clear();
 
+    g.polygon({{10,570},{970,570},{970,670},{10,670}}, WHITE, TRANSPARENT);
+    g.polygon({{970,0},{g.width(), 0},{g.width(), 670},{970, 670}}, BLACK, BLACK);
+    g.polygon({{10,670},{g.width(),670},{g.height(),g.width()},{10, g.height()}}, BLACK, BLACK);
+    g.line(10,570,10,0, WHITE);
+    g.line(970,570,970,0,WHITE);
+
     string chaPounds = to_string(money[0]);
     chaPounds.append(" Pounds");
     string chaShillings = to_string(money[1]);
@@ -688,7 +748,7 @@ void PlayerData::buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, in
 
     g.text(15,18,18,shopDesc,WHITE);
 
-    g.line(g.width()/2,0,g.width()/2,g.height(), WHITE);
+    g.line(505,0,505,570, WHITE);
 
     for(unsigned int i = 0; i<shopInventory.size(); i++)
     {
@@ -742,11 +802,9 @@ int readyToStart(mssm::Graphics& g)
     g.clear();
 
     Button startGame = {{20,50},{120,80}};
-    Button visitShop = {{140,50},{240,80}};
-    Button changeNames = {{260,50},{360,80}};
+    Button changeNames = {{140,50},{240,80}};
 
     startGame.draw(g, "Start Game", 10);
-    visitShop.draw(g, "Shop", 10);
     changeNames.draw(g, "Change Names", 10);
 
     while (g.draw())
@@ -758,10 +816,6 @@ int readyToStart(mssm::Graphics& g)
                 if (startGame.isButtonPressed(e))
                 {
                     return 1;
-                }
-                if (visitShop.isButtonPressed(e))
-                {
-                    return 2;
                 }
                 if (changeNames.isButtonPressed(e))
                 {

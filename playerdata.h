@@ -5,7 +5,7 @@
 #include <string>
 #include "graphics.h"
 #include "item.h"
-
+#include "town.h"
 
 
 
@@ -31,6 +31,7 @@ public:
     void selectCharacters(mssm::Graphics& g);
     bool titleScreen(mssm::Graphics& g, double& initialWidth, double& initialHeight);
     void selectPath(mssm::Graphics& g);
+    bool checkInventory(mssm::Graphics& g);
 };
 
 
@@ -40,6 +41,7 @@ public:
 std::string getText(mssm::Graphics& g, double x, double y, double size);
 int getNumber(mssm::Graphics& g, double x, double y, double size);
 int readyToStart(mssm::Graphics& g);
+void drawHUDs(mssm::Graphics& g);
 
 
 

@@ -14,11 +14,14 @@ public:
     std::string townDesc;
     std::vector<Item> shop;
     std::string shopDesc;
+    std::vector<int> canGoTo;
+    int talkNum;
 
 
 
 
-    Town(int townNum, std::string name, std::string townDescrip, std::vector<Item> shoppe, std::string shopDescrip);
+
+    Town(int townNum, std::string name, std::string townDescrip, std::vector<Item> shoppe, std::string shopDescrip, std::vector<int> placesToGo, int talkVal);
 };
 
 #endif // TOWN_H
