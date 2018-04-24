@@ -15,7 +15,7 @@ using namespace mssm;
 
 void drawHUD(Graphics& g)
 {
-    g.polygon({{10,570},{970,570},{970,670},{10,670}}, WHITE, TRANSPARENT);
+    g.polygon({{10,570},{970,570},{970,670},{10,670}}, WHITE, );
     g.line(10,570,10,0, WHITE);
     g.line(970,570,970,0,WHITE);
     return;
@@ -84,8 +84,6 @@ void graphicsMain(Graphics& g)
             while (textYVal > 0)
             {
                 g.clear();
-
-
 
                 printText(g, 15, textYVal, towns[player.townNumber].townName, PURPLE);
                 printText(g, 15, textYVal+30, towns[player.townNumber].townDesc, WHITE);
