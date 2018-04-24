@@ -18,6 +18,9 @@ public:
     std::vector<int> money; // Has 4 values; Pounds, Shillings, Pence, Farthing in that order
     std::vector<Item> inventory;
     int difficulty;
+    bool diseased;
+    int pathNumber;
+    int townNumber;
 
     PlayerData(double numberOfCompanions, std::vector<double> startingHealth, std::vector<int> startingMoney);
     void drawCharacter(mssm::Graphics& g, bool walkCycleVal);
@@ -27,6 +30,7 @@ public:
     void selectDifficulty(mssm::Graphics& g);
     void selectCharacters(mssm::Graphics& g);
     bool titleScreen(mssm::Graphics& g, double& initialWidth, double& initialHeight);
+    void selectPath(mssm::Graphics& g);
 };
 
 

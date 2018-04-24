@@ -20,6 +20,8 @@ PlayerData::PlayerData(double numberOfCompanions, std::vector<double> startingHe
     companionNames = {" "," "," "," "};
     inventory = {};
     difficulty = -1;
+    diseased = false;
+    townNumber = 0;
 }
 
 bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& initialHeight)
@@ -43,8 +45,8 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
         g.setBackground(BLACK);
         g.draw();
         g.text(20, 100, 100, "Lymestone Trail", PURPLE);
-        g.line({1024,0},{1024,height}, WHITE);
-        g.line({0,768},{width,768}, WHITE);
+        g.line({970,0},{970,650}, WHITE);
+        g.line({0,650},{970,650}, WHITE);
 
         Button startButton = {{20,130},{185,165}};
         Button exitButton = {{200,130},{365,165}};
@@ -68,6 +70,7 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
                     {
                         selectDifficulty(g);
                         selectCharacters(g);
+                        selectPath(g);
                         p = 1;
                     }
                 }
@@ -97,19 +100,45 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
                 companionNames[3] = "";
                 selectCharacters(g);
                 break;
-            case 4:
-                selectDifficulty(g);
-                break;
             }
         }
 
+    }
+
+    return 0;
+}
+
+void PlayerData::selectPath(mssm::Graphics& g)
+{
+    g.clear();
+    g.text(20,80,50, "Please Select a Path to Take", PURPLE);
+    Button pathOne = {{20,130},{185,165}};
+
+    pathOne.draw(g, "Path 1", 15);
+
+    while(g.draw())
+    {
+        for(const Event& e : g.events())
+        {
+            if (e.evtType == EvtType::MousePress)
+            {
+                if (pathOne.isButtonPressed(e))
+                {
+                    pathNumber = 1;
+                    return;
+                }
+                else
+                {
+
+                }
+            }
+        }
     }
 }
 
 void PlayerData::selectDifficulty(mssm::Graphics& g)
 {
     g.clear();
-    g.draw();
     g.text(20, 80, 50, "Please Select a Difficulty Level", PURPLE);
     Button kingsHighwayDiff = {{20,130},{185,165}};
     Button aristocraftDiff = {{200,130},{365,165}};
@@ -156,7 +185,6 @@ void PlayerData::selectDifficulty(mssm::Graphics& g)
 void PlayerData::selectCharacters(mssm::Graphics& g)
 {
     g.clear();
-    g.draw();
     g.text(15, 18, 18, "You and four friends are travelling to the village of Lymestone", PURPLE);
     g.text(15,34,18,"What are your names?", PURPLE);
 
@@ -373,6 +401,8 @@ string getText(Graphics& g, double x, double y, double size)
             }
         }
     }
+
+    return 0;
 }
 
 int getNumber(Graphics& g, double x, double y, double size)
@@ -453,6 +483,8 @@ int getNumber(Graphics& g, double x, double y, double size)
             }
         }
     }
+
+    return 0;
 }
 
 
@@ -461,7 +493,7 @@ void PlayerData::shop(mssm::Graphics& g, std::vector<Item>& shopInventory, std::
     g.text(15,18,18,shopDesc,WHITE);
     g.line(g.width()/2,0,g.width()/2,g.height(), WHITE);
 
-    for(int i = 0; i<shopInventory.size(); i++)
+    for(unsigned int i = 0; i<shopInventory.size(); i++)
     {
         string num = to_string(i+1);
         num.push_back('.');
@@ -603,16 +635,28 @@ void PlayerData::buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, in
 
     g.text(515, 97, 18, confirmation1, WHITE);
     g.text(515, 113, 18, confirmation2, WHITE);
-    g.text(515, 129, 18, confirmation3, WHITE);
+    g.text(515, 145, 18, confirmation3, WHITE);
 
-    string yOrN = getText(g, 785, 129, 18);
+    string yOrN = getText(g, 785, 145, 18);
 
     if (yOrN == "y" || yOrN == "yes")
     {
         if(transaction(g, totalPrice))
         {
+            bool passOver = false;
             Item toBeAdded = {shopInventory[i].itemName, numOfItems, shopInventory[i].price, shopInventory[i].description};
-            inventory.push_back(toBeAdded);
+            for(Item i : inventory)
+            {
+                if (i.itemName == toBeAdded.itemName)
+                {
+                    i.quantity = i.quantity + numOfItems;
+                    passOver = true;
+                }
+            }
+            if (!passOver)
+            {
+                inventory.push_back(toBeAdded);
+            }
         }
     }
     else if (yOrN == "n" || yOrN == "no")
@@ -646,7 +690,7 @@ void PlayerData::buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, in
 
     g.line(g.width()/2,0,g.width()/2,g.height(), WHITE);
 
-    for(int i = 0; i<shopInventory.size(); i++)
+    for(unsigned int i = 0; i<shopInventory.size(); i++)
     {
         string num = to_string(i+1);
         num.push_back('.');
@@ -700,12 +744,10 @@ int readyToStart(mssm::Graphics& g)
     Button startGame = {{20,50},{120,80}};
     Button visitShop = {{140,50},{240,80}};
     Button changeNames = {{260,50},{360,80}};
-    Button changeDiff = {{380,50},{480,80}};
 
     startGame.draw(g, "Start Game", 10);
     visitShop.draw(g, "Shop", 10);
     changeNames.draw(g, "Change Names", 10);
-    changeDiff.draw(g, "Set Difficulty", 10);
 
     while (g.draw())
     {
@@ -725,14 +767,11 @@ int readyToStart(mssm::Graphics& g)
                 {
                     return 3;
                 }
-                if (changeDiff.isButtonPressed(e))
-                {
-                    return 4;
-                }
             }
         }
     }
 
+    return 0;
 }
 
 
