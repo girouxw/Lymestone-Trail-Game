@@ -10,7 +10,8 @@ SOURCES += \
     graphics.cpp \
     playerdata.cpp \
     button.cpp \
-    item.cpp
+    item.cpp \
+    town.cpp
 
 HEADERS  += \
     graphics.h \
@@ -19,5 +20,6 @@ HEADERS  += \
     window.h \
     playerdata.h \
     button.h \
-    item.h
+    item.h \
+    town.h
 
