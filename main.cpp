@@ -134,9 +134,10 @@ void graphicsMain(Graphics& g)
 {
     PlayerData player = {0, {0,0,0,0}, {0,0,0,0}};
     vector<Item> standardShop = {{"Wheel", 20,{1,0,0,0}, "A simple Wheel"}, {"Axel", 21, {0,2,10,0}, "A wooden Axel used in carts and wagons"}};
-    Town lymestone = {0, "Lymestone", "Trees gently sway as the mountains dwarf this small town to the east of Lancaster.|This is the town in which your adventure will begin.", standardShop, "The general store is before you.", {1}, g.randomInt(0,10)};
-    Town sheffield = {1, "Sheffield", "Sheffield Description|Here", standardShop, "The general store is before you.", {0}, g.randomInt(0,10)};
-    vector<Town> towns = {lymestone, sheffield};
+    Town lymestone = {0, "Lymestone", "Trees gently sway as the mountains dwarf this small town to the east of Lancaster.|This is the town in which your adventure will begin.", standardShop, "The general store is before you.", {1,2}, g.randomInt(0,10), -1};
+    Town sheffield = {1, "Sheffield", "Sheffield Description|Here", standardShop, "The general store is before you.", {0,2}, g.randomInt(0,10), 1};
+    Town nottingham = {2, "Nottingham", "Nottingham Description| Here", standardShop, "The general store is before you.", {0,1}, g.randomInt(0,10),1};
+    vector<Town> towns = {lymestone, sheffield, nottingham};
 
     double initialWidth = 0;
     double initialHeight = 0;
@@ -150,26 +151,44 @@ void graphicsMain(Graphics& g)
     g.clear();
     drawHUD(g);
     bool travelling = false;
-
+/*
     switch (player.pathNumber)
     {
     case 1:
         vector<int> townOrder = {0,1};
         break;
     }
+*/
+
+    Button inventory = {{30, 590},{150,650}};
+    Button changePace = {{170,590},{290,650}};
+    Button stopToRest = {{310, 590},{430,650}};
+    Button changeRations = {{450,590},{620,650}};
+
 
     while (g.draw())
     {
         if (!travelling)
         {
 
-            if(!town(g,player,towns[player.townNumber]));
+            if(!town(g,player,towns[player.townNumber]))
             {
                 return;
             }
-            selectDestination(g, player, towns[player.townNumber]);
+
+            int newTownNum = player.selectDestination(g, towns);
             travelling = true;
+            player.townNumber = newTownNum;
         }
+
+        g.clear();
+        drawHUD(g);
+        inventory.draw(g,"Inventory",15);
+        changePace.draw(g,"Change Pace",15);
+        changeRations.draw(g,"Ration Food/Water",15);
+        stopToRest.draw(g,"Stop to Rest",15);
+
+
     }
 }
 

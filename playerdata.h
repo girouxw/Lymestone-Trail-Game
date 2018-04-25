@@ -32,12 +32,13 @@ public:
     bool titleScreen(mssm::Graphics& g, double& initialWidth, double& initialHeight);
     void selectPath(mssm::Graphics& g);
     bool checkInventory(mssm::Graphics& g);
+    int selectDestination(mssm::Graphics& g, std::vector<Town> allTowns);
 };
 
 
 
 
-
+void printTextTwo(mssm::Graphics& g, int x, int y, std::string text, mssm::Color textColor);
 std::string getText(mssm::Graphics& g, double x, double y, double size);
 int getNumber(mssm::Graphics& g, double x, double y, double size);
 int readyToStart(mssm::Graphics& g);

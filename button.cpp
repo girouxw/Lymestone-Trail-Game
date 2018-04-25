@@ -18,7 +18,7 @@ void Button::draw(mssm::Graphics& g, std::string text, int size)
                          {topLeft.x, bottomRight.y}};
 
     g.polygon(pts, WHITE, TRANSPARENT);
-    g.text((topLeft.x + bottomRight.x)/2 - size*2.25, (topLeft.y + bottomRight.y)/2 + size/3, size, text, WHITE);
+    g.text(topLeft.x + 20, (topLeft.y + bottomRight.y)/2 + size/3, size, text, WHITE);
 }
 
 bool Button::isButtonPressed(const Event& e)

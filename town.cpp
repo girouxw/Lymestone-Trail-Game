@@ -1,6 +1,6 @@
 #include "town.h"
 
-Town::Town(int townNum, std::string name, std::string townDescrip, std::vector<Item> shoppe, std::string shopDescrip, std::vector<int> placesToGo, int talkVal)
+Town::Town(int townNum, std::string name, std::string townDescrip, std::vector<Item> shoppe, std::string shopDescrip, std::vector<int> placesToGo, int talkVal, int dangerLev)
 {
     townNumber = townNum;
     townName = name;
@@ -9,4 +9,5 @@ Town::Town(int townNum, std::string name, std::string townDescrip, std::vector<I
     shopDesc = shopDescrip;
     canGoTo = placesToGo;
     talkNum = talkVal;
+    dangerLevel = dangerLev;
 }

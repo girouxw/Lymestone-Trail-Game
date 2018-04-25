@@ -70,7 +70,7 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
                     {
                         selectDifficulty(g);
                         selectCharacters(g);
-                        selectPath(g);
+                        //selectPath(g);
                         p = 1;
                     }
                 }
@@ -102,6 +102,44 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
     }
 
     return 0;
+}
+
+int PlayerData::selectDestination(mssm::Graphics& g, vector<Town> allTowns)
+{
+    bool goodInput = false;
+    while(!goodInput)
+    {
+        g.clear();
+        drawHUDs(g);
+        g.text(20, 40, 40, "From here, you can go to:", PURPLE);
+
+        string possibilities = "";
+
+        for(int i = 0; i< allTowns[townNumber].canGoTo.size(); ++i)
+        {
+            //int newTownNumber = allTowns[townNumber].canGoTo[i];
+
+            possibilities.append(to_string(i+1));
+            possibilities.append(".  ");
+            possibilities.append(allTowns[allTowns[townNumber].canGoTo[i]].townName);
+            possibilities.append("|");
+        }
+
+        printTextTwo(g, 40, 60, possibilities, WHITE);
+        g.text(20,590,20, "Pick a Town Number:", WHITE);
+        int choice = getNumber(g,220,590,20);
+        if (choice > allTowns[townNumber].canGoTo.size() || choice == 0)
+        {
+            g.text(20,620,20,"Not an Option", RED);
+            g.draw(1000);
+        }
+        else
+        {
+            int newTownNumber = allTowns[townNumber].canGoTo[choice - 1];
+            return newTownNumber;
+        }
+
+    }
 }
 
 void PlayerData::selectPath(mssm::Graphics& g)
@@ -202,9 +240,8 @@ void PlayerData::selectCharacters(mssm::Graphics& g)
 string getText(Graphics& g, double x, double y, double size)
 {
     string name = "";
-
     while (g.draw())
-    {
+    {    
         for(const Event& e : g.events())
         {
             if (e.evtType == EvtType::KeyPress)
@@ -405,6 +442,31 @@ string getText(Graphics& g, double x, double y, double size)
     return 0;
 }
 
+void printTextTwo(Graphics& g, int x, int y, string text, Color textColor)
+{
+    vector<string> formattedText;
+    size_t breakIndex = text.find("|");
+
+    while (breakIndex != -1)
+    {
+        formattedText.push_back(text.substr(0,breakIndex));
+        text = text.substr(breakIndex+1, text.size()-1);
+        breakIndex = text.find("|");
+    }
+
+    if (formattedText.size() == 0 || breakIndex == -1)
+    {
+        formattedText.push_back(text);
+    }
+
+    for (int p = 0; p < formattedText.size(); ++p)
+    {
+        g.text({x, y + p*16}, 15, formattedText[p], textColor);
+    }
+
+    return;
+}
+
 int getNumber(Graphics& g, double x, double y, double size)
 {
     string name = "";
@@ -486,7 +548,6 @@ int getNumber(Graphics& g, double x, double y, double size)
 
     return 0;
 }
-
 
 void PlayerData::shop(mssm::Graphics& g, std::vector<Item>& shopInventory, std::string shopDesc)
 {
@@ -760,7 +821,6 @@ void PlayerData::buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, in
     }
 
 }
-
 
 bool PlayerData::transaction(Graphics& g, vector<int> totalCharge)
 {
