@@ -761,11 +761,11 @@ void PlayerData::buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, in
         {
             bool passOver = false;
             Item toBeAdded = {shopInventory[i].itemName, numOfItems, shopInventory[i].price, shopInventory[i].description};
-            for(Item i : inventory)
+            for(int i = 0; i < inventory.size(); ++i)
             {
-                if (i.itemName == toBeAdded.itemName)
+                if (inventory[i].itemName == toBeAdded.itemName)
                 {
-                    i.quantity = i.quantity + numOfItems;
+                    inventory[i].quantity = inventory[i].quantity + numOfItems;
                     passOver = true;
                 }
             }
@@ -775,10 +775,7 @@ void PlayerData::buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, in
             }
         }
     }
-    else if (yOrN == "n" || yOrN == "no")
-    {
-
-    }
+    else if (yOrN == "n" || yOrN == "no"){}
     else
     {
         g.text(200,400,18, "Bad Transaction", RED);

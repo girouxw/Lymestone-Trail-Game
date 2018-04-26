@@ -18,6 +18,7 @@ void drawHUD(Graphics& g)
     g.polygon({{10,570},{970,570},{970,670},{10,670}}, WHITE, BLACK);
     g.polygon({{970,0},{g.width(), 0},{g.width(), 670},{970, 670}}, BLACK, BLACK);
     g.polygon({{10,670},{g.width(),670},{g.height(),g.width()},{10, g.height()}}, BLACK, BLACK);
+    //g.polygon({{0,0},{20,0},{20,670},{0,670}},BLACK,BLACK);
     g.line(10,570,10,0, WHITE);
     g.line(970,570,970,0,WHITE);
     return;
@@ -125,11 +126,6 @@ bool town(Graphics& g, PlayerData& player, Town& town)
     }
 }
 
-void selectDestination(Graphics& g, PlayerData& player, Town& town)
-{
-
-}
-
 void graphicsMain(Graphics& g)
 {
     PlayerData player = {0, {0,0,0,0}, {0,0,0,0}};
@@ -138,7 +134,8 @@ void graphicsMain(Graphics& g)
     Town sheffield = {1, "Sheffield", "Sheffield Description|Here", standardShop, "The general store is before you.", {0,2}, g.randomInt(0,10), 1};
     Town nottingham = {2, "Nottingham", "Nottingham Description| Here", standardShop, "The general store is before you.", {0,1}, g.randomInt(0,10),1};
     vector<Town> towns = {lymestone, sheffield, nottingham};
-
+    Image boy("C:\\Users\\Wyatt\\Desktop\\Game\\Lymestone-Trail-Game\\BetterestBoy.png");
+    Image landOne("C:\\Users\\Wyatt\\Desktop\\Game\\Lymestone-Trail-Game\\pretty.png");
     double initialWidth = 0;
     double initialHeight = 0;
 
@@ -166,6 +163,10 @@ void graphicsMain(Graphics& g)
     Button changeRations = {{450,590},{620,650}};
 
     bool reloadHUD = true;
+    int playerX = 894;
+    int playerY = 500;
+    int velocityX = 5;
+    int velocityY = 5;
 
     while (g.draw())
     {
@@ -185,6 +186,8 @@ void graphicsMain(Graphics& g)
         if(reloadHUD)
         {
             g.clear();
+            g.image(20,0, landOne);
+            g.image(playerX,playerY, boy);
             drawHUD(g);
             inventory.draw(g,"Inventory",15);
             changePace.draw(g,"Change Pace",15);
@@ -222,25 +225,30 @@ void graphicsMain(Graphics& g)
                     g.setCloseOnExit(true);
                     return;
                 }
-                if (e.arg == (int)Key::Left)
+                if (e.arg == (int)Key::Left && playerX > 0)
                 {
-
+                    reloadHUD = true;
+                    playerX = playerX - velocityX;
                 }
-                if (e.arg == (int)Key::Right)
+                if (e.arg == (int)Key::Right && playerX <960)
                 {
-
+                    reloadHUD = true;
+                    playerX = playerX + velocityX;
                 }
-                if (e.arg == (int)Key::Up)
+                if (e.arg == (int)Key::Up && playerY > 0)
                 {
-
+                    reloadHUD = true;
+                    playerY = playerY - velocityY;
                 }
-                if (e.arg == (int)Key::Down)
+                if (e.arg == (int)Key::Down && playerY < 560)
                 {
-
+                    reloadHUD = true;
+                    playerY = playerY + velocityY;
                 }
             }
         }
 
+        //player.checkForBadness(g)
 
     }
 }
