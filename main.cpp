@@ -165,6 +165,7 @@ void graphicsMain(Graphics& g)
     Button stopToRest = {{310, 590},{430,650}};
     Button changeRations = {{450,590},{620,650}};
 
+    bool reloadHUD = true;
 
     while (g.draw())
     {
@@ -181,12 +182,64 @@ void graphicsMain(Graphics& g)
             player.townNumber = newTownNum;
         }
 
-        g.clear();
-        drawHUD(g);
-        inventory.draw(g,"Inventory",15);
-        changePace.draw(g,"Change Pace",15);
-        changeRations.draw(g,"Ration Food/Water",15);
-        stopToRest.draw(g,"Stop to Rest",15);
+        if(reloadHUD)
+        {
+            g.clear();
+            drawHUD(g);
+            inventory.draw(g,"Inventory",15);
+            changePace.draw(g,"Change Pace",15);
+            changeRations.draw(g,"Ration Food/Water",15);
+            stopToRest.draw(g,"Stop to Rest",15);
+            reloadHUD = false;
+        }
+
+        for (const Event& e : g.events())
+        {
+            if (e.evtType == EvtType::MousePress)
+            {
+                if (inventory.isButtonPressed(e))
+                {
+                    player.checkInventory(g);
+                    reloadHUD = true;
+                }
+                if (changePace.isButtonPressed(e))
+                {
+
+                }
+                if (changeRations.isButtonPressed(e))
+                {
+
+                }
+                if (stopToRest.isButtonPressed(e))
+                {
+
+                }
+            }
+            if (e.evtType == EvtType::KeyPress)
+            {
+                if (e.arg == 16777216)
+                {
+                    g.setCloseOnExit(true);
+                    return;
+                }
+                if (e.arg == (int)Key::Left)
+                {
+
+                }
+                if (e.arg == (int)Key::Right)
+                {
+
+                }
+                if (e.arg == (int)Key::Up)
+                {
+
+                }
+                if (e.arg == (int)Key::Down)
+                {
+
+                }
+            }
+        }
 
 
     }

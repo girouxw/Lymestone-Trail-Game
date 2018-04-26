@@ -22,6 +22,7 @@ PlayerData::PlayerData(double numberOfCompanions, std::vector<double> startingHe
     difficulty = -1;
     diseased = false;
     townNumber = 0;
+    travelPace = 1;
 }
 
 bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& initialHeight)

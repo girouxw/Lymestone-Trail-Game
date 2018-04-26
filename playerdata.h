@@ -21,6 +21,7 @@ public:
     bool diseased;
     int pathNumber;
     int townNumber;
+    int travelPace;
 
     PlayerData(double numberOfCompanions, std::vector<double> startingHealth, std::vector<int> startingMoney);
     void drawCharacter(mssm::Graphics& g, bool walkCycleVal);
