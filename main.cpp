@@ -128,14 +128,23 @@ bool town(Graphics& g, PlayerData& player, Town& town)
 
 void graphicsMain(Graphics& g)
 {
-    PlayerData player = {0, {0,0,0,0}, {0,0,0,0}};
-    vector<Item> standardShop = {{"Wheel", 20,{1,0,0,0}, "A simple Wheel"}, {"Axel", 21, {0,2,10,0}, "A wooden Axel used in carts and wagons"}};
-    Town lymestone = {0, "Lymestone", "Trees gently sway as the mountains dwarf this small town to the east of Lancaster.|This is the town in which your adventure will begin.", standardShop, "The general store is before you.", {1,2}, g.randomInt(0,10), -1};
-    Town sheffield = {1, "Sheffield", "Sheffield Description|Here", standardShop, "The general store is before you.", {0,2}, g.randomInt(0,10), 1};
-    Town nottingham = {2, "Nottingham", "Nottingham Description| Here", standardShop, "The general store is before you.", {0,1}, g.randomInt(0,10),1};
+    PlayerData player = {0, {10,10,10,10}, {0,0,0,0}};
+    vector<Item> standardShop = {{"Wheel", 20,{1,0,0,0}, "A simple Wheel"},
+                                 {"Axel", 21, {0,2,10,0}, "A wooden Axel used in carts and wagons"}};
+
+    Town lymestone = {0, "Lymestone", "Trees gently sway as the mountains dwarf this small town to the east of Lancaster.|This is the town in which your adventure will begin.",
+                      standardShop, "The general store is before you.", {1,2}, -1, 2};
+    Town sheffield = {1, "Sheffield", "Sheffield Description|Here", standardShop,
+                      "The general store is before you.", {0,2}, 1, 3};
+    Town nottingham = {2, "Nottingham", "Nottingham Description| Here", standardShop,
+                       "The general store is before you.", {0,1}, 1, 4};
+
     vector<Town> towns = {lymestone, sheffield, nottingham};
     Image boy("C:\\Users\\Wyatt\\Desktop\\Game\\Lymestone-Trail-Game\\BetterestBoy.png");
     Image landOne("C:\\Users\\Wyatt\\Desktop\\Game\\Lymestone-Trail-Game\\pretty.png");
+    Image landTwo("C:\\Users\\Wyatt\\Desktop\\Game\\Lymestone-Trail-Game\\landTwo.png");
+
+    vector<Image> landscapes = {landOne, landTwo};
     double initialWidth = 0;
     double initialHeight = 0;
 
@@ -148,14 +157,7 @@ void graphicsMain(Graphics& g)
     g.clear();
     drawHUD(g);
     bool travelling = false;
-/*
-    switch (player.pathNumber)
-    {
-    case 1:
-        vector<int> townOrder = {0,1};
-        break;
-    }
-*/
+
 
     Button inventory = {{30, 590},{150,650}};
     Button changePace = {{170,590},{290,650}};
@@ -165,8 +167,11 @@ void graphicsMain(Graphics& g)
     bool reloadHUD = true;
     int playerX = 894;
     int playerY = 500;
-    int velocityX = 5;
-    int velocityY = 5;
+    int velocity = 5;
+
+    int screenNumber = 1;
+    Image land = landOne;
+
 
     while (g.draw())
     {
@@ -183,16 +188,25 @@ void graphicsMain(Graphics& g)
             player.townNumber = newTownNum;
         }
 
+        for (int i = 0; i< player.badnessLevel.size(); ++i)
+        {
+            player.badnessLevel[i] = 10*player.difficulty*(player.diseaseState[i] + player.travelPace + towns[player.townNumber].dangerLevel);
+        }
+
         if(reloadHUD)
         {
             g.clear();
-            g.image(20,0, landOne);
+            player.checkForBadness(g);
+            g.image(20,0, land);
             g.image(playerX,playerY, boy);
             drawHUD(g);
+            player.printHealth(g);
             inventory.draw(g,"Inventory",15);
             changePace.draw(g,"Change Pace",15);
             changeRations.draw(g,"Ration Food/Water",15);
             stopToRest.draw(g,"Stop to Rest",15);
+            g.text(1000,50,20,to_string(player.badnessLevel[0]),PURPLE);
+
             reloadHUD = false;
         }
 
@@ -207,7 +221,8 @@ void graphicsMain(Graphics& g)
                 }
                 if (changePace.isButtonPressed(e))
                 {
-
+                    velocity = player.changePace(g);
+                    reloadHUD = true;
                 }
                 if (changeRations.isButtonPressed(e))
                 {
@@ -215,7 +230,8 @@ void graphicsMain(Graphics& g)
                 }
                 if (stopToRest.isButtonPressed(e))
                 {
-
+                    player.stopToRest(g);
+                    reloadHUD = true;
                 }
             }
             if (e.evtType == EvtType::KeyPress)
@@ -225,30 +241,45 @@ void graphicsMain(Graphics& g)
                     g.setCloseOnExit(true);
                     return;
                 }
-                if (e.arg == (int)Key::Left && playerX > 0)
+                if (e.arg == (int)Key::Left)
                 {
                     reloadHUD = true;
-                    playerX = playerX - velocityX;
+                    playerX = playerX - velocity;
                 }
                 if (e.arg == (int)Key::Right && playerX <960)
                 {
                     reloadHUD = true;
-                    playerX = playerX + velocityX;
+                    playerX = playerX + velocity;
                 }
                 if (e.arg == (int)Key::Up && playerY > 0)
                 {
                     reloadHUD = true;
-                    playerY = playerY - velocityY;
+                    playerY = playerY - velocity;
                 }
                 if (e.arg == (int)Key::Down && playerY < 560)
                 {
                     reloadHUD = true;
-                    playerY = playerY + velocityY;
+                    playerY = playerY + velocity;
                 }
             }
         }
+        if (playerX < 20 && screenNumber == towns[player.townNumber].numOfScreens)
+        {
+            playerX = 894;
+            screenNumber = 1;
+            travelling = false;
+        }
+        else if (playerX < 20 && screenNumber < towns[player.townNumber].numOfScreens)
+        {
+            playerX = 894;
+            int i = g.randomInt(0,landscapes.size()-1);
+            land = landscapes[i];
+            screenNumber += 1;
+        }
 
-        //player.checkForBadness(g)
+
+
+
 
     }
 }

@@ -14,16 +14,17 @@ class PlayerData
 public:
     double numOfCompanions;
     std::vector<std::string> companionNames;
-    std::vector<double> companionHealth;
+    std::vector<int> companionHealth;
     std::vector<int> money; // Has 4 values; Pounds, Shillings, Pence, Farthing in that order
     std::vector<Item> inventory;
     int difficulty;
-    bool diseased;
-    int pathNumber;
+    std::vector<int> diseaseState;
     int townNumber;
     int travelPace;
+    std::vector<int> badnessLevel;
 
-    PlayerData(double numberOfCompanions, std::vector<double> startingHealth, std::vector<int> startingMoney);
+
+    PlayerData(double numberOfCompanions, std::vector<int> startingHealth, std::vector<int> startingMoney);
     void drawCharacter(mssm::Graphics& g, bool walkCycleVal);
     void shop(mssm::Graphics& g, std::vector<Item>& shopInventory, std::string shopDesc);
     void buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, int i, std::string shopDesc);
@@ -34,6 +35,10 @@ public:
     void selectPath(mssm::Graphics& g);
     bool checkInventory(mssm::Graphics& g);
     int selectDestination(mssm::Graphics& g, std::vector<Town> allTowns);
+    void checkForBadness(mssm::Graphics& g);
+    void printHealth(mssm::Graphics& g);
+    int changePace(mssm::Graphics& g);
+    void stopToRest(mssm::Graphics& g);
 };
 
 

@@ -478,6 +478,7 @@ void PlayerData::stopToRest(mssm::Graphics& g)
         else if (rand == 0)
         {
             companionHealth[g.randomInt(0,3)] -= 10;
+            
         }
         else
         {

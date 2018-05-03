@@ -15,14 +15,16 @@ public:
     std::vector<Item> shop;
     std::string shopDesc;
     std::vector<int> canGoTo;
-    int talkNum;
     int dangerLevel;
+    int numOfScreens;
 
 
 
 
 
-    Town(int townNum, std::string name, std::string townDescrip, std::vector<Item> shoppe, std::string shopDescrip, std::vector<int> placesToGo, int talkVal, int dangerLev);
+    Town(int townNum, std::string name, std::string townDescrip, std::vector<Item> shoppe,
+         std::string shopDescrip, std::vector<int> placesToGo, int dangerLev,
+         int numberOfScreens);
 };
 
 #endif // TOWN_H
