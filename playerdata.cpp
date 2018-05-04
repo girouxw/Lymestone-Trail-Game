@@ -461,16 +461,15 @@ void PlayerData::printHealth(mssm::Graphics& g)
 
 void PlayerData::stopToRest(mssm::Graphics& g)
 {
-    Button back = {{830,20},{950,80}};
 
     g.polygon({{295,100},{695,100},{695,300},{295,300}},WHITE,BLACK);
     g.text(300,200,20,"How many days do you rest?",WHITE);
-    int daysToRest = getNumber(g,550,200,20);
+    int daysToRest = getNumber(g,570,200,20);
 
     for (int i = 0; i < daysToRest; ++i)
     {
         int rand = g.randomInt(0,10);
-        int randPlayer = g.randomInt(0,3);
+        int randPlayer = g.randomInt(0,numOfCompanions-1);
         if(rand > 0 && rand <= 5 && companionHealth[randPlayer] < 10)
         {
             companionHealth[randPlayer] += 1;
@@ -486,11 +485,45 @@ void PlayerData::stopToRest(mssm::Graphics& g)
     }
 }
 
+bool PlayerData::checkForDeath(mssm::Graphics& g)
+{
+    for (auto i = 0; i < companionHealth.size(); ++i)
+    {
+        if (companionHealth[i] <= 0)
+        {
+            Button back = {{600,120},{690,200}};
+            string deadName = companionNames[i];
+            deadName.append(" has died.");
+            g.polygon({{295,100},{695,100},{695,300},{295,300}},WHITE,BLACK);
+            g.text(300,200,20,deadName,WHITE);
+            back.draw(g,"Back",15);
+            companionHealth.erase(companionHealth.begin()+i);
+            companionNames.erase(companionNames.begin()+i);
+            diseaseState.erase(diseaseState.begin()+i);
+            badnessLevel.erase(badnessLevel.begin()+i);
+            numOfCompanions -= 1;
+            while (g.draw())
+            {
+                for (const Event& e : g.events())
+                {
+                    if (e.evtType == EvtType::MousePress && back.isButtonPressed(e))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+
+        }
+    }
+    return false;
+}
+
 void PlayerData::checkForBadness(mssm::Graphics& g)
 {
     Button back = {{830,20},{950,80}};
 
-    int i = g.randomInt(0,3);
+    int i = g.randomInt(0,numOfCompanions-1);
 
     int rand = g.randomInt(0, 1000 - badnessLevel[i]);
 

@@ -39,6 +39,8 @@ public:
     void printHealth(mssm::Graphics& g);
     int changePace(mssm::Graphics& g);
     void stopToRest(mssm::Graphics& g);
+    bool checkForDeath(mssm::Graphics& g);
+
 };
 
 

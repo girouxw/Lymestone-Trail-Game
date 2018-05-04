@@ -9,6 +9,7 @@
 #include "button.h"
 #include "item.h"
 #include "town.h"
+#include <iterator>
 
 using namespace std;
 using namespace mssm;
@@ -124,11 +125,12 @@ bool town(Graphics& g, PlayerData& player, Town& town)
             }
         }
     }
+    return false;
 }
 
 void graphicsMain(Graphics& g)
 {
-    PlayerData player = {0, {10,10,10,10}, {0,0,0,0}};
+    PlayerData player = {4, {10,10,10,10}, {0,0,0,0}};
     vector<Item> standardShop = {{"Wheel", 20,{1,0,0,0}, "A simple Wheel"},
                                  {"Axel", 21, {0,2,10,0}, "A wooden Axel used in carts and wagons"}};
 
@@ -140,9 +142,9 @@ void graphicsMain(Graphics& g)
                        "The general store is before you.", {0,1}, 1, 4};
 
     vector<Town> towns = {lymestone, sheffield, nottingham};
-    Image boy("C:\\Users\\Wyatt\\Desktop\\Game\\Lymestone-Trail-Game\\BetterestBoy.png");
-    Image landOne("C:\\Users\\Wyatt\\Desktop\\Game\\Lymestone-Trail-Game\\pretty.png");
-    Image landTwo("C:\\Users\\Wyatt\\Desktop\\Game\\Lymestone-Trail-Game\\landTwo.png");
+    Image boy("C:\\Users\\Wyatt\\Desktop\\Lymestone Trail\\BetterestBoy.png");
+    Image landOne("C:\\Users\\Wyatt\\Desktop\\Lymestone Trail\\pretty.png");
+    Image landTwo("C:\\Users\\Wyatt\\Desktop\\Lymestone Trail\\landTwo.png");
 
     vector<Image> landscapes = {landOne, landTwo};
     double initialWidth = 0;
@@ -188,15 +190,40 @@ void graphicsMain(Graphics& g)
             player.townNumber = newTownNum;
         }
 
-        for (int i = 0; i< player.badnessLevel.size(); ++i)
+        if (player.companionNames.size() == 0)
+        {
+            g.clear();
+            g.text(200,200,50,"You Died, press Esc to exit",RED);
+            while (g.draw())
+            {
+                for(const Event& e : g.events())
+                {
+                    if (e.evtType == EvtType::KeyPress)
+                    {
+                        if (e.arg == 16777216)
+                        {
+                            g.setCloseOnExit(true); //------------------------ FINISH
+                            return;
+                        }
+                    }
+                }
+            }
+
+        }
+
+        for (int i = 0; i < player.badnessLevel.size(); ++i)
         {
             player.badnessLevel[i] = 10*player.difficulty*(player.diseaseState[i] + player.travelPace + towns[player.townNumber].dangerLevel);
         }
 
+
+
         if(reloadHUD)
         {
+
             g.clear();
             player.checkForBadness(g);
+            g.clear();
             g.image(20,0, land);
             g.image(playerX,playerY, boy);
             drawHUD(g);
@@ -275,6 +302,11 @@ void graphicsMain(Graphics& g)
             int i = g.randomInt(0,landscapes.size()-1);
             land = landscapes[i];
             screenNumber += 1;
+        }
+
+        if(player.checkForDeath(g))
+        {
+            reloadHUD = true;
         }
 
 
