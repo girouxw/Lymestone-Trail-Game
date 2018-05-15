@@ -16,8 +16,9 @@ public:
     int quantity;
     std::vector<int> price;
     std::string description;
+    bool isFood;
 
-    Item(std::string item, double quant, std::vector<int> priceTag, std::string desc);
+    Item(std::string item, double quant, std::vector<int> priceTag, std::string desc, bool isItFood);
 };
 
 #endif // ITEM_H

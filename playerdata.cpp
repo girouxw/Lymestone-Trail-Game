@@ -12,7 +12,7 @@ using namespace std;
 using namespace mssm;
 
 
-PlayerData::PlayerData(double numberOfCompanions, std::vector<int> startingHealth, std::vector<int> startingMoney)
+PlayerData::PlayerData(double numberOfCompanions, std::vector<int> startingHealth, std::vector<int> startingMoney, std::vector<Image> walks)
 {
     numOfCompanions = numberOfCompanions;
     companionHealth = startingHealth;
@@ -22,8 +22,11 @@ PlayerData::PlayerData(double numberOfCompanions, std::vector<int> startingHealt
     difficulty = -1;
     diseaseState = {0,0,0,0};
     townNumber = 0;
-    travelPace = 1;
+    travelPace = 5;
     badnessLevel = {0,0,0,0};
+    walkingSprites = walks;
+    spriteNumber = 0;
+    spriteIterator = 0;
 }
 
 bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& initialHeight)
@@ -33,7 +36,9 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
     string stringWidth = to_string(width);
     string stringHeight = to_string(height);
 
-    vector<Item> startingShop = {{"Wheel", 20,{1,0,0,0}, "A simple Wheel"}, {"Axel", 21, {0,2,10,0}, "A wooden Axel used in carts and wagons"}};
+    vector<Item> startingShop = {{"Wheel", 20,{1,0,0,0}, "A simple Wheel",0},
+                                 {"Axel", 21, {0,2,10,0}, "A wooden Axel used in carts and wagons",0},
+                                 {"Cheese", 20, {0,1,0,0}, "Cheese!",1}};
     string startingShopDesc = "Welcome to Flynn's General Store! Buy Something Will 'Ya!";
 
     g.text(1300,100,10,stringWidth, WHITE);
@@ -194,25 +199,25 @@ void PlayerData::selectDifficulty(mssm::Graphics& g)
             {
                 if (kingsHighwayDiff.isButtonPressed(e))
                 {
-                    difficulty = 1;
+                    difficulty = 4;
                     money = {100,0,0,0};
                     return;
                 }
                 if (aristocraftDiff.isButtonPressed(e))
                 {
-                    difficulty = 2;
+                    difficulty = 3;
                     money = {50,0,0,0};
                     return;
                 }
                 if (villaniDiff.isButtonPressed(e))
                 {
-                    difficulty = 3;
+                    difficulty = 2;
                     money = {10,0,0,0};
                     return;
                 }
                 if (poorPeasantDiff.isButtonPressed(e))
                 {
-                    difficulty = 4;
+                    difficulty = 1;
                     money = {1,0,0,0};
                     return;
                 }
@@ -237,6 +242,13 @@ void PlayerData::selectCharacters(mssm::Graphics& g)
     companionNames[2] = getText(g, 95, 87, 18);
     companionNames[3] = getText(g, 95, 103, 18);
     g.clear();
+/*
+    if (companionNames[0] = "outlaw")
+    {
+        difficulty = 8;
+        money = {1,0,0,0};
+    }
+*/
 }
 
 string getText(Graphics& g, double x, double y, double size)
@@ -461,6 +473,7 @@ void PlayerData::printHealth(mssm::Graphics& g)
 
 void PlayerData::stopToRest(mssm::Graphics& g)
 {
+    bool alreadyFKD = false;
 
     g.polygon({{295,100},{695,100},{695,300},{295,300}},WHITE,BLACK);
     g.text(300,200,20,"How many days do you rest?",WHITE);
@@ -470,19 +483,38 @@ void PlayerData::stopToRest(mssm::Graphics& g)
     {
         int rand = g.randomInt(0,10);
         int randPlayer = g.randomInt(0,numOfCompanions-1);
-        if(rand > 0 && rand <= 5 && companionHealth[randPlayer] < 10)
+        if(companionHealth[randPlayer] < 10)
         {
             companionHealth[randPlayer] += 1;
         }
-        else if (rand == 0)
+        else if (rand == 0 && alreadyFKD)
         {
-            companionHealth[g.randomInt(0,3)] -= 10;
-        }
-        else
-        {
-
+            companionHealth[g.randomInt(0,3)] -= 12;
+            alreadyFKD = true;
         }
     }
+}
+
+Image PlayerData::updateSprite()
+{
+    if (spriteIterator < 2)
+    {
+        spriteIterator++;
+        return walkingSprites[spriteNumber];
+    }
+
+    spriteIterator = 0;
+
+    if (spriteNumber > 2)
+    {
+        spriteNumber = 0;
+    }
+    else
+    {
+        spriteNumber += 1;
+    }
+
+    return walkingSprites[spriteNumber];
 }
 
 bool PlayerData::checkForDeath(mssm::Graphics& g)
@@ -519,133 +551,99 @@ bool PlayerData::checkForDeath(mssm::Graphics& g)
     return false;
 }
 
-void PlayerData::checkForBadness(mssm::Graphics& g)
+void PlayerData::checkFood(Graphics& g)
 {
-    Button back = {{830,20},{950,80}};
+    Button back = {{600,120},{690,200}};
 
-    int i = g.randomInt(0,numOfCompanions-1);
+    bool eatenToday = false;
 
-    int rand = g.randomInt(0, 1000 - badnessLevel[i]);
-
-    if (rand < 10)
+    for (int t = 0; t < inventory.size(); ++t)
     {
-        string oopsy = companionNames[i];
-        int problem = g.randomInt(0,5);
-        switch (problem)
+        if (inventory[t].isFood && inventory[t].quantity != 0)
         {
-        case 0:
-            g.clear();
-            drawHUDs(g);
-            oopsy.append(" has broken their arm.");
-            back.draw(g,"Back",15);
-            g.text(20,20,20,oopsy,RED);
-            companionHealth[i] -= 1;
-            diseaseState[i] = 10 - companionHealth[i];
-            while (g.draw())
-            {
-                for (const Event& e : g.events())
-                {
-                    if (e.evtType == EvtType::MousePress && back.isButtonPressed(e))
-                    {
-                        return;
-                    }
-                }
-            }
+            inventory[t].quantity--;
+            eatenToday = true;
             break;
-        case 1:
-            g.clear();
-            drawHUDs(g);
-            oopsy.append(" has broken their arm.");
-            back.draw(g,"Back",15);
-            g.text(20,20,20,oopsy,RED);
-            companionHealth[i] -= 1;
-            while (g.draw())
-            {
-                for (const Event& e : g.events())
-                {
-                    if (e.evtType == EvtType::MousePress && back.isButtonPressed(e))
-                    {
-                        return;
-                    }
-                }
-            }
-            break;
-        case 2:
-            g.clear();
-            drawHUDs(g);
-            oopsy.append(" has broken their leg.");
-            back.draw(g,"Back",15);
-            g.text(20,20,20,oopsy,RED);
-            companionHealth[i] -= 1;
-            while (g.draw())
-            {
-                for (const Event& e : g.events())
-                {
-                    if (e.evtType == EvtType::MousePress && back.isButtonPressed(e))
-                    {
-                        return;
-                    }
-                }
-            }
-            break;
-        case 3:
-            g.clear();
-            drawHUDs(g);
-            oopsy.append(" has contracted the plague.");
-            back.draw(g,"Back",15);
-            g.text(20,20,20,oopsy,RED);
-            companionHealth[i] -= 1;
-            while (g.draw())
-            {
-                for (const Event& e : g.events())
-                {
-                    if (e.evtType == EvtType::MousePress && back.isButtonPressed(e))
-                    {
-                        return;
-                    }
-                }
-            }
-            break;
-        case 4:
-            g.clear();
-            drawHUDs(g);
-            oopsy.append(" is freezing to death.");
-            back.draw(g,"Back",15);
-            g.text(20,20,20,oopsy,RED);
-            companionHealth[i] -= 1;
-            while (g.draw())
-            {
-                for (const Event& e : g.events())
-                {
-                    if (e.evtType == EvtType::MousePress && back.isButtonPressed(e))
-                    {
-                        return;
-                    }
-                }
-            }
-            break;
-        case 5:
-            g.clear();
-            drawHUDs(g);
-            oopsy.append(" has rickets, like the sailors of old.");
-            back.draw(g,"Back",15);
-            g.text(20,20,20,oopsy,RED);
-            companionHealth[i] -= 1;
-            while (g.draw())
-            {
-                for (const Event& e : g.events())
-                {
-                    if (e.evtType == EvtType::MousePress && back.isButtonPressed(e))
-                    {
-                        return;
-                    }
-                }
-            }
-            break;
-
         }
     }
 
+    if (!eatenToday)
+    {
+        int q = g.randomInt(0,numOfCompanions-1);
+        companionHealth[q] -= 1;
+        g.polygon({{295,100},{695,100},{695,300},{295,300}},WHITE,BLACK);
+        back.draw(g, "Back", 15);
+        string starving =  companionNames[q];
+        starving.append(" is starving to death.");
+        g.text(300,200,15,starving,WHITE);
+
+        while(g.draw())
+        {
+            for (const Event& e : g.events())
+            {
+                if (e.evtType == EvtType::MousePress && back.isButtonPressed(e))
+                {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+int PlayerData::changeRations(mssm::Graphics& g)
+{
+
+}
+
+void PlayerData::checkForBadness(mssm::Graphics& g)
+{
+    Button back = {{600,120},{690,200}};
+
+    int i = g.randomInt(0,numOfCompanions-1);
+
+    int rand = g.randomInt(0, 25 - badnessLevel[i]);
+
+    if (rand < 5)
+    {
+        string oopsy = companionNames[i];
+        int problem = g.randomInt(0,5);
+        g.polygon({{295,100},{695,100},{695,300},{295,300}},WHITE,BLACK);
+        back.draw(g,"Back",15);
+        switch (problem)
+        {
+        case 0:
+            oopsy.append(" has broken their arm.");
+            break;
+        case 1:
+            oopsy.append(" has broken their arm.");
+            break;
+        case 2:
+            oopsy.append(" has broken their leg.");
+            break;
+        case 3:
+            oopsy.append(" has contracted the plague.");
+            break;
+        case 4:
+            oopsy.append(" is freezing to death.");
+            break;
+        case 5:
+            oopsy.append(" has rickets, like the sailors of old.");
+            break;
+        }
+        g.text(300,200,15,oopsy,RED);
+        companionHealth[i] -= 1;
+        diseaseState[i] = 10 - companionHealth[i];
+        while (g.draw())
+        {
+            for (const Event& e : g.events())
+            {
+                if (e.evtType == EvtType::MousePress && back.isButtonPressed(e))
+                {
+                    return;
+                }
+            }
+        }
+    }
 }
 
 void printTextTwo(Graphics& g, int x, int y, string text, Color textColor)
@@ -701,13 +699,13 @@ int PlayerData::changePace(mssm::Graphics& g)
                 }
                 if (normal.isButtonPressed(e))
                 {
-                    travelPace = 3;
+                    travelPace = 5;
                     return 5;
                 }
                 if (fast.isButtonPressed(e))
                 {
-                    travelPace = 6;
-                    return 8;
+                    travelPace = 10;
+                    return 8; //8
                 }
             }
         }
@@ -941,11 +939,14 @@ bool PlayerData::checkInventory(mssm::Graphics& g)
 
     for(unsigned int i = 0; i<inventory.size(); i++)
     {
-        string num = to_string(inventory[i].quantity);
-        num.append(" .......... ");
-        num.append(inventory[i].itemName);
+        if (inventory[i].quantity != 0)
+        {
+            string num = to_string(inventory[i].quantity);
+            num.append(" .......... ");
+            num.append(inventory[i].itemName);
+            g.text(15,55 + (42*i),18, num,WHITE);
+        }
 
-        g.text(15,55 + (42*i),18, num,WHITE);
     }
 
     while(g.draw())
@@ -1006,7 +1007,7 @@ void PlayerData::buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, in
         if(transaction(g, totalPrice))
         {
             bool passOver = false;
-            Item toBeAdded = {shopInventory[i].itemName, numOfItems, shopInventory[i].price, shopInventory[i].description};
+            Item toBeAdded = {shopInventory[i].itemName, numOfItems, shopInventory[i].price, shopInventory[i].description, shopInventory[i].isFood};
             for(int i = 0; i < inventory.size(); ++i)
             {
                 if (inventory[i].itemName == toBeAdded.itemName)
@@ -1132,36 +1133,20 @@ int readyToStart(mssm::Graphics& g)
     return 0;
 }
 
+void endGame (Graphics& g)
+{
+    g.clear();
+    g.text(50,50,50,"You Win!", PURPLE);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    while (g.draw())
+    {
+        for(const Event& e : g.events())
+        {
+            if (e.evtType == EvtType::KeyPress && e.arg == 16777216)
+            {
+                g.setCloseOnExit(true);
+                return;
+            }
+        }
+    }
+}

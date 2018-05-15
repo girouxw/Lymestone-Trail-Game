@@ -22,9 +22,11 @@ public:
     int townNumber;
     int travelPace;
     std::vector<int> badnessLevel;
+    std::vector<mssm::Image> walkingSprites;
+    int spriteNumber;
+    int spriteIterator;
 
-
-    PlayerData(double numberOfCompanions, std::vector<int> startingHealth, std::vector<int> startingMoney);
+    PlayerData(double numberOfCompanions, std::vector<int> startingHealth, std::vector<int> startingMoney, std::vector<mssm::Image> walks);
     void drawCharacter(mssm::Graphics& g, bool walkCycleVal);
     void shop(mssm::Graphics& g, std::vector<Item>& shopInventory, std::string shopDesc);
     void buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, int i, std::string shopDesc);
@@ -40,7 +42,10 @@ public:
     int changePace(mssm::Graphics& g);
     void stopToRest(mssm::Graphics& g);
     bool checkForDeath(mssm::Graphics& g);
-
+    void checkFood(mssm::Graphics& g);
+    mssm::Image updateSprite();
+    int changeRations(mssm::Graphics& g);
+    void endGame (mssm::Graphics& g);
 };
 
 
