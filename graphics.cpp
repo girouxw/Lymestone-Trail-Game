@@ -41,6 +41,41 @@ using namespace std;
 
 // todo:  http://stackoverflow.com/questions/5642063/inheriting-ostream-and-streambuf-problem-with-xsputn-and-overflow
 
+std::string findFile(const std::string& filename)
+{
+    auto qfilename = QString::fromStdString(filename);
+
+    QFileInfo check_file(qfilename);
+
+    if (check_file.exists() && check_file.isFile())
+    {
+        return QDir(qfilename).absolutePath().toStdString();
+    }
+
+    QDir dir;
+
+    dir.absolutePath();
+
+    if (dir.exists(qfilename)) {
+        return dir.absoluteFilePath(qfilename).toStdString();
+    }
+
+    dir.cd("data");
+
+    if (dir.exists(qfilename)) {
+        return dir.absoluteFilePath(qfilename).toStdString();
+    }
+
+    dir.cdUp();
+    dir.cd("assets");
+
+    if (dir.exists(qfilename)) {
+        return dir.absoluteFilePath(qfilename).toStdString();
+    }
+
+    return "";
+}
+
 class iStreamBuf : public std::streambuf
 {
     public:
@@ -194,7 +229,8 @@ namespace mssm
 
     Image::Image(const std::string& filename)
     {
-        pixmap = std::make_shared<QPixmap>(QString::fromStdString(filename));
+        string fname = findFile(filename);
+        pixmap = std::make_shared<QPixmap>(QString::fromStdString(fname));
     }
 
 
@@ -354,6 +390,8 @@ namespace mssm
 
 
 }
+
+
 
 Worker::Worker(QThread *t, mssm::Graphics* g, Window *w) : graphics(g), window(w), thread(t)
 {

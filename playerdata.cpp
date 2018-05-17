@@ -199,7 +199,7 @@ void PlayerData::selectDifficulty(mssm::Graphics& g)
             {
                 if (kingsHighwayDiff.isButtonPressed(e))
                 {
-                    difficulty = 4;
+                    difficulty = 3;
                     money = {100,0,0,0};
                     return;
                 }
@@ -217,7 +217,7 @@ void PlayerData::selectDifficulty(mssm::Graphics& g)
                 }
                 if (poorPeasantDiff.isButtonPressed(e))
                 {
-                    difficulty = 1;
+                    difficulty = 2;
                     money = {1,0,0,0};
                     return;
                 }
@@ -601,7 +601,7 @@ void PlayerData::checkForBadness(mssm::Graphics& g)
 
     int i = g.randomInt(0,numOfCompanions-1);
 
-    int rand = g.randomInt(0, 25 - badnessLevel[i]);
+    int rand = g.randomInt(0, 15 - badnessLevel[i]);
 
     if (rand < 5)
     {

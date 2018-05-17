@@ -176,12 +176,12 @@ void graphicsMain(Graphics& g)
                           birmingham, leicester, hereford, gloucester, banbury, northhampton, peterborough,
                           bristol, swindon, oxford, cambridge, london, canterbury};
 
-    Image landOne("C:\\Users\\Wyatt\\Desktop\\Lymestone Trail\\pretty.png");
-    Image landTwo("C:\\Users\\Wyatt\\Desktop\\Lymestone Trail\\landTwo.png");
+    Image landOne("landOne.png");
+    Image landTwo("landTwo.png");
 
-    Image walkOne("C:\\Users\\Wyatt\\Desktop\\Lymestone Trail\\walk1.png");
-    Image walkTwo("C:\\Users\\Wyatt\\Desktop\\Lymestone Trail\\walk2.png");
-    Image walkThree("C:\\Users\\Wyatt\\Desktop\\Lymestone Trail\\walk3.png");
+    Image walkOne("walk1.png");
+    Image walkTwo("walk2.png");
+    Image walkThree("walk3.png");
 
     vector<Image> walks = {walkOne,walkTwo,walkOne,walkThree};
 
@@ -220,7 +220,7 @@ void graphicsMain(Graphics& g)
     int checkDangerIterator = 0;
     int foodIterator = 0;
     int foodThreshold = 150 - player.travelPace*10;
-    int dangerThreshold = player.difficulty * 50;
+    int dangerThreshold = player.difficulty * 40;
 
     while (g.draw())
     {
@@ -233,7 +233,7 @@ void graphicsMain(Graphics& g)
 
             if (player.townNumber == 19)
             {
-                player.endGame(g);
+                //player.endGame(g);
                 break;
             }
 
@@ -264,8 +264,8 @@ void graphicsMain(Graphics& g)
 
         for (int i = 0; i < player.badnessLevel.size(); ++i)
         {
-            player.badnessLevel[i] = player.diseaseState[i] + (player.travelPace - 5) +
-                                      towns[player.townNumber].dangerLevel;
+            player.badnessLevel[i] = (player.diseaseState[i] + (player.travelPace) +
+                                      towns[player.townNumber].dangerLevel)/2;
         }
 
         if(reloadHUD)
