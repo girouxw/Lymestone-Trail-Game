@@ -27,6 +27,7 @@ PlayerData::PlayerData(double numberOfCompanions, std::vector<int> startingHealt
     walkingSprites = walks;
     spriteNumber = 0;
     spriteIterator = 0;
+    rations = 3;
 }
 
 bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& initialHeight)
@@ -36,9 +37,9 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
     string stringWidth = to_string(width);
     string stringHeight = to_string(height);
 
-    vector<Item> startingShop = {{"Wheel", 20,{1,0,0,0}, "A simple Wheel",0},
-                                 {"Axel", 21, {0,2,10,0}, "A wooden Axel used in carts and wagons",0},
-                                 {"Cheese", 20, {0,1,0,0}, "Cheese!",1}};
+    vector<Item> startingShop = {{"Wheel", 20,{1,0,0,0}, "A simple Wheel"},
+                                 {"Axel", 21, {0,2,10,0}, "A wooden Axel used in carts and wagons"},
+                                 {"Cheese", 20, {0,1,0,0}, "Cheese!"}};
     string startingShopDesc = "Welcome to Flynn's General Store! Buy Something Will 'Ya!";
 
     g.text(1300,100,10,stringWidth, WHITE);
@@ -551,30 +552,39 @@ bool PlayerData::checkForDeath(mssm::Graphics& g)
     return false;
 }
 
+void PlayerData::removeFromInventory(std::string itemToRemove, int quantityToRemove)
+{
+    for (int i = 0; i<inventory.size(); ++i)
+    {
+        if (inventory[i].itemName == itemToRemove)
+        {
+            inventory[i].quantity -= quantityToRemove;
+            return;
+        }
+    }
+}
+
 void PlayerData::checkFood(Graphics& g)
 {
     Button back = {{600,120},{690,200}};
 
     bool eatenToday = false;
 
-    for (int t = 0; t < inventory.size(); ++t)
+    if (findItem("Cheese"))
     {
-        if (inventory[t].isFood && inventory[t].quantity != 0)
-        {
-            inventory[t].quantity--;
-            eatenToday = true;
-            break;
-        }
+        removeFromInventory("Cheese",1);
+        eatenToday = true;
     }
 
     if (!eatenToday)
     {
-        int q = g.randomInt(0,numOfCompanions-1);
-        companionHealth[q] -= 1;
+        for (int i = 0; i < companionHealth.size(); ++i)
+        {
+            companionHealth[i]--;
+        }
         g.polygon({{295,100},{695,100},{695,300},{295,300}},WHITE,BLACK);
         back.draw(g, "Back", 15);
-        string starving =  companionNames[q];
-        starving.append(" is starving to death.");
+        string starving = ("Everyone is starving to death.");
         g.text(300,200,15,starving,WHITE);
 
         while(g.draw())
@@ -590,9 +600,54 @@ void PlayerData::checkFood(Graphics& g)
     }
 }
 
-int PlayerData::changeRations(mssm::Graphics& g)
+double PlayerData::changeRations(mssm::Graphics& g)
 {
+    Button poor = {{300,235},{380, 295}};
+    Button normal = {{400,235},{480,295}};
+    Button healthy = {{500,235},{580,295}};
+    g.polygon({{295,100},{695,100},{695,300},{295,300}},WHITE,BLACK);
+    g.text(300,125,20,"Change Rationing:",WHITE);
 
+    poor.draw(g,"Poor",15);
+    normal.draw(g,"Normal",15);
+    healthy.draw(g,"Well Fed",15);
+
+    while (g.draw())
+    {
+        for(const Event& e : g.events())
+        {
+            if (e.evtType == EvtType::MousePress)
+            {
+                if (poor.isButtonPressed(e))
+                {
+                    if (rations == 5)
+                    {
+                        return 1;
+                    }
+                    rations = 5;
+                    return 2;
+                }
+                if (normal.isButtonPressed(e))
+                {
+                    if (rations == 3)
+                    {
+                        return 1;
+                    }
+                    rations = 3;
+                    return 1;
+                }
+                if (healthy.isButtonPressed(e))
+                {
+                    if (rations == 0)
+                    {
+                        return 1;
+                    }
+                    rations = 0;
+                    return 0.5;
+                }
+            }
+        }
+    }
 }
 
 void PlayerData::checkForBadness(mssm::Graphics& g)
@@ -673,14 +728,21 @@ void printTextTwo(Graphics& g, int x, int y, string text, Color textColor)
 
 int PlayerData::changePace(mssm::Graphics& g)
 {
+    Button horse = {{450,590},{570,650}};
     Button back = {{830,20},{950,80}};
     Button slow = {{30,590},{150,650}};
     Button normal = {{170,590},{290,650}};
     Button fast = {{310, 590},{430,650}};
 
+    bool horses = false;
 
     g.clear();
     drawHUDs(g);
+    if (findItem("Horses"))
+    {
+        horse.draw(g,"Horse",15);
+        horses = true;
+    }
     back.draw(g, "Back",15);
     slow.draw(g,"Slow",15);
     normal.draw(g,"Normal",15);
@@ -707,9 +769,26 @@ int PlayerData::changePace(mssm::Graphics& g)
                     travelPace = 10;
                     return 8; //8
                 }
+                if (horses && horse.isButtonPressed(e))
+                {
+                    travelPace = 5;
+                    return 12;
+                }
             }
         }
     }
+}
+
+bool PlayerData::findItem(string itemToFind)
+{
+    for (int i = 0; i < inventory.size(); ++i)
+    {
+        if (inventory[i].itemName == itemToFind)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 int getNumber(Graphics& g, double x, double y, double size)
@@ -929,6 +1008,18 @@ void drawHUDs(Graphics& g)
     return;
 }
 
+void PlayerData::cleanseInventory()
+{
+    for (int i = 0; i<inventory.size(); ++i)
+    {
+        if (inventory[i].quantity <= 0)
+        {
+            inventory.erase(inventory.begin()+i);
+        }
+    }
+    return;
+}
+
 bool PlayerData::checkInventory(mssm::Graphics& g)
 {
     Button back = {{830,20},{950,80}};
@@ -1007,7 +1098,7 @@ void PlayerData::buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, in
         if(transaction(g, totalPrice))
         {
             bool passOver = false;
-            Item toBeAdded = {shopInventory[i].itemName, numOfItems, shopInventory[i].price, shopInventory[i].description, shopInventory[i].isFood};
+            Item toBeAdded = {shopInventory[i].itemName, numOfItems, shopInventory[i].price, shopInventory[i].description};
             for(int i = 0; i < inventory.size(); ++i)
             {
                 if (inventory[i].itemName == toBeAdded.itemName)

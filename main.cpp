@@ -137,10 +137,10 @@ bool town(Graphics& g, PlayerData& player, Town& town)
 
 void graphicsMain(Graphics& g)
 {
-    Item wheel = {"Wheel", 20,{1,0,0,0}, "A simple Wheel",0};
-    Item axel = {"Axel", 21, {0,2,10,0}, "A wooden Axel used in carts and wagons",0};
-    Item cheese = {"Cheese", 20, {0,1,0,0}, "Cheese!",1};
-    vector<Item> standardShop = {wheel, axel, cheese};
+    Item cheese = {"Cheese", 20, {0,1,0,0}, "Cheese!"};
+    Item knight = {"Knight", 500, {10,0,0,0}, "A knight to acompany your party for protection."};
+    Item horse = {"Horses", 40, {10,0,0,0}, " 4 horses to speed your company along."};
+    vector<Item> standardShop = {cheese, knight,horse};
     string generalStoreDescrip = "The general store is before you.";
 
     // 0 is beginning
@@ -176,8 +176,13 @@ void graphicsMain(Graphics& g)
                           birmingham, leicester, hereford, gloucester, banbury, northhampton, peterborough,
                           bristol, swindon, oxford, cambridge, london, canterbury};
 
-    Image landOne("landOne.png");
-    Image landTwo("landTwo.png");
+    Image landOne("land1.png");
+    Image landTwo("land2.png");
+    Image landThree("land3.png");
+    Image landFour("land4.png");
+    Image landFive("land5.png");
+    Image landSix("land6.png");
+
 
     Image walkOne("walk1.png");
     Image walkTwo("walk2.png");
@@ -189,7 +194,7 @@ void graphicsMain(Graphics& g)
 
     Image sprite = walks[0];
 
-    vector<Image> landscapes = {landOne, landTwo};
+    vector<Image> landscapes = {landOne, landTwo, landThree, landFour, landFive, landSix};
     double initialWidth = 0;
     double initialHeight = 0;
 
@@ -219,8 +224,9 @@ void graphicsMain(Graphics& g)
     Image land = landOne;
     int checkDangerIterator = 0;
     int foodIterator = 0;
-    int foodThreshold = 150 - player.travelPace*10;
+    double foodThreshold = 150 - player.travelPace*10;
     int dangerThreshold = player.difficulty * 40;
+    double foodMultiplier = 1;
 
     while (g.draw())
     {
@@ -234,12 +240,15 @@ void graphicsMain(Graphics& g)
             if (player.townNumber == 19)
             {
                 //player.endGame(g);
-                break;
+                g.setCloseOnExit(true);
+                return;
             }
 
             int newTownNum = player.selectDestination(g, towns);
             travelling = true;
             player.townNumber = newTownNum;
+            player.travelPace = 5;
+            velocity = 5;
         }
 
         if (player.companionNames.size() == 0)
@@ -264,12 +273,17 @@ void graphicsMain(Graphics& g)
 
         for (int i = 0; i < player.badnessLevel.size(); ++i)
         {
-            player.badnessLevel[i] = (player.diseaseState[i] + (player.travelPace) +
-                                      towns[player.townNumber].dangerLevel)/2;
+            player.badnessLevel[i] = (player.diseaseState[i] + (player.travelPace - 5) +
+                                      towns[player.townNumber].dangerLevel + player.rations)/2;
         }
 
         if(reloadHUD)
         {
+            player.cleanseInventory();
+            foodThreshold = (150 - player.travelPace*10)*foodMultiplier;
+            g.text(300,300,50,to_string(foodThreshold),RED);
+            //g.draw(100);
+
             if (checkDangerIterator >= dangerThreshold)
             {
                 player.checkForBadness(g);
@@ -320,7 +334,8 @@ void graphicsMain(Graphics& g)
                 }
                 if (changeRations.isButtonPressed(e))
                 {
-
+                    foodMultiplier = player.changeRations(g);
+                    reloadHUD = true;
                     break;
                 }
                 if (stopToRest.isButtonPressed(e))
@@ -368,6 +383,12 @@ void graphicsMain(Graphics& g)
             playerX = 894;
             screenNumber = 1;
             travelling = false;
+            int i = g.randomInt(0,2);
+            if (i == 1)
+            {
+
+            }
+            player.removeFromInventory("Horses", 1);
         }
         else if (playerX < 20 && screenNumber < towns[player.townNumber].numOfScreens)
         {

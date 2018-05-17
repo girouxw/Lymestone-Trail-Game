@@ -25,6 +25,7 @@ public:
     std::vector<mssm::Image> walkingSprites;
     int spriteNumber;
     int spriteIterator;
+    int rations;
 
     PlayerData(double numberOfCompanions, std::vector<int> startingHealth, std::vector<int> startingMoney, std::vector<mssm::Image> walks);
     void drawCharacter(mssm::Graphics& g, bool walkCycleVal);
@@ -44,8 +45,11 @@ public:
     bool checkForDeath(mssm::Graphics& g);
     void checkFood(mssm::Graphics& g);
     mssm::Image updateSprite();
-    int changeRations(mssm::Graphics& g);
+    double changeRations(mssm::Graphics& g);
     void endGame (mssm::Graphics& g);
+    bool findItem(std::string itemToFind);
+    void removeFromInventory(std::string itemToRemove, int quantityToRemove);
+    void cleanseInventory();
 };
 
 

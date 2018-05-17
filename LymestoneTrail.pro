@@ -24,8 +24,12 @@ HEADERS  += \
     town.h
 
 DISTFILES += \
-    data/landOne.png \
-    data/landTwo.png \
+    data/land1.png \
+    data/land2.png \
+    data/land3.png \
+    data/land4.png \
+    data/land5.png \
+    data/land6.png \
     data/walk1.png \
     data/walk2.png \
     data/walk3.png
