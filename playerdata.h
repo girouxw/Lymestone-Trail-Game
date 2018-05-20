@@ -52,12 +52,13 @@ public:
     void removeFromInventory(std::string itemToRemove, int quantityToRemove);
     void cleanseInventory();
     void checkBrigands(mssm::Graphics& g, int chanceOfBrigands);
+    void conversation(mssm::Graphics& g);
 };
 
 
 
 
-void printTextTwo(mssm::Graphics& g, int x, int y, std::string text, mssm::Color textColor);
+void printTextTwo(mssm::Graphics& g, int x, int y, std::string text, mssm::Color textColor, int size);
 std::string getText(mssm::Graphics& g, double x, double y, double size);
 int getNumber(mssm::Graphics& g, double x, double y, double size);
 int readyToStart(mssm::Graphics& g);

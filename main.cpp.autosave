@@ -61,6 +61,7 @@ bool town(Graphics& g, PlayerData& player, Town& town)
 
         printText(g, 15, textYVal, town.townName, PURPLE);
         printText(g, 15, textYVal+30, town.townDesc, WHITE);
+        g.image(20,0,);
         drawHUD(g);
         textYVal = textYVal + velocity;
         g.draw(10);
@@ -105,6 +106,7 @@ bool town(Graphics& g, PlayerData& player, Town& town)
                 {
                     player.shop(g,town.shop,town.shopDesc);
                     g.clear();
+                    g.image(20,0,town.townPic);
                     drawHUD(g);
                     moveOn.draw(g, "Head Out", 15);
                     shop.draw(g,"Shop",15);
@@ -113,7 +115,13 @@ bool town(Graphics& g, PlayerData& player, Town& town)
                 }
                 if (talk.isButtonPressed(e))
                 {
-                    player.conversation(g); //DEFINE ----------------------------------------------------------------
+                    player.conversation(g);
+                    drawHUD(g);
+                    g.image(20,0,town.townPic);
+                    moveOn.draw(g, "Head Out", 15);
+                    shop.draw(g,"Shop",15);
+                    talk.draw(g,"Talk",15);
+                    inventory.draw(g,"Inventory",15);
                 }
                 if (inventory.isButtonPressed(e))
                 {
@@ -123,11 +131,11 @@ bool town(Graphics& g, PlayerData& player, Town& town)
                     }
                     g.clear();
                     drawHUD(g);
+                    g.image(20,0,town.townPic);
                     moveOn.draw(g, "Head Out", 15);
                     shop.draw(g,"Shop",15);
                     talk.draw(g,"Talk",15);
                     inventory.draw(g,"Inventory",15);
-
                 }
             }
         }

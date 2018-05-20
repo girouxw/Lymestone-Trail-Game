@@ -48,7 +48,7 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
         initialWidth = width;
         g.setBackground(BLACK);
         g.draw();
-        g.text(20, 100, 100, "Lymestone Trail", PURPLE);
+        g.text(20, 100, 100, "Canterbury Trail", PURPLE);
         g.line({970,0},{970,650}, WHITE);
         g.line({0,650},{970,650}, WHITE);
 
@@ -120,7 +120,7 @@ int PlayerData::selectDestination(mssm::Graphics& g, vector<Town> allTowns)
 
         string possibilities = "";
 
-        for(int i = 0; i< allTowns[townNumber].canGoTo.size(); ++i)
+        for(int i = 0; i< (int)allTowns[townNumber].canGoTo.size(); ++i)
         {
             //int newTownNumber = allTowns[townNumber].canGoTo[i];
 
@@ -130,10 +130,10 @@ int PlayerData::selectDestination(mssm::Graphics& g, vector<Town> allTowns)
             possibilities.append("|");
         }
 
-        printTextTwo(g, 40, 60, possibilities, WHITE);
+        printTextTwo(g, 40, 60, possibilities, WHITE,15);
         g.text(20,590,20, "Pick a Town Number:", WHITE);
         int choice = getNumber(g,220,590,20);
-        if (choice > allTowns[townNumber].canGoTo.size() || choice == 0)
+        if (choice > (int)allTowns[townNumber].canGoTo.size() || choice == 0)
         {
             g.text(20,620,20,"Not an Option", RED);
             g.draw(1000);
@@ -145,6 +145,7 @@ int PlayerData::selectDestination(mssm::Graphics& g, vector<Town> allTowns)
         }
 
     }
+    return townNumber;
 }
 
 void PlayerData::selectPath(mssm::Graphics& g)
@@ -240,13 +241,13 @@ void PlayerData::selectCharacters(mssm::Graphics& g)
     companionNames[2] = getText(g, 95, 87, 18);
     companionNames[3] = getText(g, 95, 103, 18);
     g.clear();
-/*
-    if (companionNames[0] = "outlaw")
+
+    if (companionNames[0] == "outlaw")
     {
-        difficulty = 8;
-        money = {1,0,0,0};
+        endGame(g);
     }
-*/
+
+    return;
 }
 
 string getText(Graphics& g, double x, double y, double size)
@@ -458,7 +459,7 @@ void PlayerData::printHealth(mssm::Graphics& g)
 {
     string health;
     
-    for(int i = 0; i < companionHealth.size(); ++i)
+    for(int i = 0; i < (int)companionHealth.size(); ++i)
     {
         health.append(companionNames[i]);
         health.append(": ");
@@ -466,7 +467,7 @@ void PlayerData::printHealth(mssm::Graphics& g)
         health.append("|");
     }
 
-    printTextTwo(g, 20,20,health,PURPLE);
+    printTextTwo(g, 20,20,health,PURPLE,15);
 }
 
 void PlayerData::stopToRest(mssm::Graphics& g)
@@ -517,7 +518,7 @@ Image PlayerData::updateSprite()
 
 bool PlayerData::checkForDeath(mssm::Graphics& g)
 {
-    for (auto i = 0; i < companionHealth.size(); ++i)
+    for (auto i = 0; i < (int)companionHealth.size(); ++i)
     {
         if (companionHealth[i] <= 0)
         {
@@ -551,7 +552,7 @@ bool PlayerData::checkForDeath(mssm::Graphics& g)
 
 void PlayerData::removeFromInventory(std::string itemToRemove, int quantityToRemove)
 {
-    for (int i = 0; i<inventory.size(); ++i)
+    for (int i = 0; i<(int)inventory.size(); ++i)
     {
         if (inventory[i].itemName == itemToRemove)
         {
@@ -575,7 +576,7 @@ void PlayerData::checkFood(Graphics& g)
 
     if (!eatenToday)
     {
-        for (int i = 0; i < companionHealth.size(); ++i)
+        for (int i = 0; i < (int)companionHealth.size(); ++i)
         {
             companionHealth[i]--;
         }
@@ -645,16 +646,18 @@ double PlayerData::changeRations(mssm::Graphics& g)
             }
         }
     }
+    rations = 3;
+    return 1;
 }
 
-void PlayerData::checkBrigands(Graphics &g, int chanceOfBrigands)
+void PlayerData::checkBrigands(Graphics& g, int chanceOfBrigands)
 {
     Button pay = {{300,235},{380, 295}};
     Button giveUp = {{400,235},{480,295}};
 
     if (findItem("Knight"))
     {
-        for (int i = 0; i < inventory.size(); ++i)
+        for (int i = 0; i < (int)inventory.size(); ++i)
         {
             if (inventory[i].itemName == "Knight")
             {
@@ -687,10 +690,10 @@ void PlayerData::checkBrigands(Graphics &g, int chanceOfBrigands)
         string moneyOr = "Your Money or Your Life!|We Want ";
         moneyOr.append(to_string(toTake));
         moneyOr.append(" Pounds.");
-        printTextTwo(g, 300,120,moneyOr,WHITE);
+        printTextTwo(g, 300,120,moneyOr,WHITE,15);
         if (protection != 0)
         {
-            for (int i = 0; i < inventory.size(); ++i)
+            for (int i = 0; i < (int)inventory.size(); ++i)
             {
                 if (inventory[i].itemName == "Knight")
                 {
@@ -779,26 +782,26 @@ void PlayerData::checkForBadness(mssm::Graphics& g)
     }
 }
 
-void printTextTwo(Graphics& g, int x, int y, string text, Color textColor)
+void printTextTwo(Graphics& g, int x, int y, string text, Color textColor, int size)
 {
     vector<string> formattedText;
     size_t breakIndex = text.find("|");
 
-    while (breakIndex != -1)
+    while ((int)breakIndex != -1)
     {
         formattedText.push_back(text.substr(0,breakIndex));
         text = text.substr(breakIndex+1, text.size()-1);
         breakIndex = text.find("|");
     }
 
-    if (formattedText.size() == 0 || breakIndex == -1)
+    if ((int)formattedText.size() == 0 || (int)breakIndex == -1)
     {
         formattedText.push_back(text);
     }
 
-    for (int p = 0; p < formattedText.size(); ++p)
+    for (int p = 0; p < (int)formattedText.size(); ++p)
     {
-        g.text({x, y + p*16}, 15, formattedText[p], textColor);
+        g.text({(double)x, (double)(y + p*16)}, size, formattedText[p], textColor);
     }
 
     return;
@@ -855,11 +858,13 @@ int PlayerData::changePace(mssm::Graphics& g)
             }
         }
     }
+    travelPace = 5;
+    return 5;
 }
 
 bool PlayerData::findItem(string itemToFind)
 {
-    for (int i = 0; i < inventory.size(); ++i)
+    for (int i = 0; i < (int)inventory.size(); ++i)
     {
         if (inventory[i].itemName == itemToFind)
         {
@@ -957,8 +962,8 @@ void PlayerData::shop(mssm::Graphics& g, std::vector<Item>& shopInventory, std::
     g.text(15,18,18,shopDesc,WHITE);
     g.line(505,0,505,570, WHITE);
     g.polygon({{10,570},{970,570},{970,670},{10,670}}, WHITE, TRANSPARENT);
-    g.polygon({{970,0},{g.width(), 0},{g.width(), 670},{970, 670}}, BLACK, BLACK);
-    g.polygon({{10,670},{g.width(),670},{g.height(),g.width()},{10, g.height()}}, BLACK, BLACK);
+    g.polygon({{970,0},{(double)g.width(), 0.0},{(double)g.width(), 670.0},{970.0, 670.0}}, BLACK, BLACK);
+    g.polygon({{10.0,670.0},{(double)g.width(),670.0},{(double)g.height(),(double)g.width()},{10.0, (double)g.height()}}, BLACK, BLACK);
     g.line(10,570,10,0, WHITE);
     g.line(970,570,970,0,WHITE);
 
@@ -1079,8 +1084,8 @@ void PlayerData::shop(mssm::Graphics& g, std::vector<Item>& shopInventory, std::
 void drawHUDs(Graphics& g)
 {
     g.polygon({{10,570},{970,570},{970,670},{10,670}}, WHITE, BLACK);
-    g.polygon({{970,0},{g.width(), 0},{g.width(), 670},{970, 670}}, BLACK, BLACK);
-    g.polygon({{10,670},{g.width(),670},{g.height(),g.width()},{10, g.height()}}, BLACK, BLACK);
+    g.polygon({{970,0},{(double)g.width(), 0.0},{(double)g.width(), 670.0},{970.0, 670.0}}, BLACK, BLACK);
+    g.polygon({{10.0,670.0},{(double)g.width(),670.0},{(double)g.height(),(double)g.width()},{10.0, (double)g.height()}}, BLACK, BLACK);
     g.line(10,570,10,0, WHITE);
     g.line(970,570,970,0,WHITE);
     return;
@@ -1088,7 +1093,7 @@ void drawHUDs(Graphics& g)
 
 void PlayerData::cleanseInventory()
 {
-    for (int i = 0; i<inventory.size(); ++i)
+    for (int i = 0; i<(int)inventory.size(); ++i)
     {
         if (inventory[i].quantity <= 0)
         {
@@ -1135,14 +1140,70 @@ bool PlayerData::checkInventory(mssm::Graphics& g)
                 }
             }
         }
+    }
+    return false;
+}
 
+ void PlayerData::conversation(mssm::Graphics& g)
+ {
+    int rand = g.randomInt(0,9);
+    string conversation = "";
+    Button back = {{600,120},{690,200}};
+
+    switch (rand)
+    {
+    case 0:
+        conversation.append("I got some cheese at the market.|My family will eat tonight!");
+        break;
+    case 1:
+        conversation.append("I'm too zany for the Reeve to|bother collecting my fines!");
+        break;
+    case 2:
+        conversation.append("My rat died yesterday.");
+        break;
+    case 3:
+        conversation.append("Would you call this building more|Romanesque or Gothic?");
+        break;
+    case 4:
+        conversation.append("Why was Stephen not Matilda?");
+        break;
+    case 5:
+        conversation.append("I heard a|bunch of people in|Stenchfield kept the king from|visiting by spreading|madness throughout their town.");
+        break;
+    case 6:
+        conversation.append("What's a Canterbury?");
+        break;
+    case 7:
+        conversation.append("There have been a lot of brigands|around recently");
+        break;
+    case 8:
+        conversation.append("Don't bother me, I'm going|to get my daily allotment of wine.");
+        break;
+    case 9:
+        conversation.append("I'm going to Lymestone, how about you?");
+        break;
     }
 
-}
+    g.polygon({{295,100},{695,100},{695,300},{295,300}},WHITE,BLACK);
+    printTextTwo(g,300,160,conversation,WHITE,15);
+    back.draw(g,"Back",15);
+
+    while(g.draw())
+    {
+        for(const Event& e : g.events())
+        {
+            if (e.evtType == EvtType::MousePress && back.isButtonPressed(e))
+            {
+                return;
+            }
+        }
+    }
+    return;
+ }
 
 void PlayerData::buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, int i, string shopDesc)
 {
-    g.text(515, 18, 18, shopInventory[i].description, WHITE);
+    printTextTwo(g,515, 18, shopInventory[i].description, WHITE,15);
 
     g.text(515, 55, 18, "How Many Do You Want?", WHITE);
     int numOfItems = getNumber(g,725,55,18);
@@ -1176,8 +1237,8 @@ void PlayerData::buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, in
         if(transaction(g, totalPrice))
         {
             bool passOver = false;
-            Item toBeAdded = {shopInventory[i].itemName, numOfItems, shopInventory[i].price, shopInventory[i].description};
-            for(int i = 0; i < inventory.size(); ++i)
+            Item toBeAdded = {shopInventory[i].itemName, (double)numOfItems, shopInventory[i].price, shopInventory[i].description};
+            for(int i = 0; i < (int)inventory.size(); ++i)
             {
                 if (inventory[i].itemName == toBeAdded.itemName)
                 {
@@ -1202,8 +1263,8 @@ void PlayerData::buyItem(mssm::Graphics& g, std::vector<Item>& shopInventory, in
     g.clear();
 
     g.polygon({{10,570},{970,570},{970,670},{10,670}}, WHITE, TRANSPARENT);
-    g.polygon({{970,0},{g.width(), 0},{g.width(), 670},{970, 670}}, BLACK, BLACK);
-    g.polygon({{10,670},{g.width(),670},{g.height(),g.width()},{10, g.height()}}, BLACK, BLACK);
+    g.polygon({{970,0},{(double)g.width(), 0.0},{(double)g.width(), 670.0},{970.0, 670.0}}, BLACK, BLACK);
+    g.polygon({{10.0,670.0},{(double)g.width(),670.0},{(double)g.height(),(double)g.width()},{10.0, (double)g.height()}}, BLACK, BLACK);
     g.line(10,570,10,0, WHITE);
     g.line(970,570,970,0,WHITE);
 
@@ -1306,6 +1367,25 @@ void PlayerData::endGame(Graphics& g)
 {
     g.clear();
     g.text(50,50,50,"You Win!", PURPLE);
+    g.text(50,100, 15, "Press Escape to Proceed", WHITE);
+
+    int textYVal = 0;
+    int velocity = 5;
+
+    string worksCited = "Dargue, William. 'A Brief History of Birmingham.' ''A History of BIRMINGHAM Places & Placenames from A to Y.'' William Dargue, |   https://billdargue.jimdo.com/glossary-brief-histories/a-brief-history-of-birmingham/medieval-birmingham/. Accessed 20 May 2018.||"
+                        "Lambert, Tim. 'A BRIEF HISTORY OF BANBURY, OXFORDSHIRE, ENGLAND, ENGLAND.' ''A WORLD HISTORY ENCYCLOPEDIA,'' http://www.localhistories.org/banbury.html. Accessed 20 May 2018.||"
+                        "Lambert, Tim. 'A BRIEF HISTORY OF BRISTOL, ENGLAND.' ''A WORLD HISTORY ENCYCLOPEDIA,'' http://www.localhistories.org/bristol.html. Accessed 20 May 2018.||"
+                        "Lambert, Tim. 'A BRIEF HISTORY OF CAMBRIDGE, ENGLAND.' ''A WORLD HISTORY ENCYCLOPEDIA,'' http://www.localhistories.org/cambridge.html. Accessed 20 May 2018.||"
+                        "Lambert, Tim. 'A BREIF HISTORY OF HEREFORD, HEREFORDSHIRE, ENGLAND.' ''A WORLD HISTORY ENCYCLOPEDIA,'' http://www.localhistories.org/hereford.html. Accessed 20 May 2018.||"
+                        "Lambert, Tim. 'A BRIEF HISTORY OF MANCHESTER, ENGLAND.' ''A WORLD HISTORY ENCYCLOPEDIA,'' http://www.localhistories.org/manchester.html. Accessed 20 May 2018.||"
+                        "'Later medieval Chester 1230-1550: Economy and society, 1350-1550.'''British History Online.'' University of London, http://www.british-history.ac.uk/vch/ches/vol5/pt1/pp64-80. Accessed 20 May 2018.||"
+                        "Lambert, Tim. 'A BRIEF HISTORY OF NORTHAMPTON, NORTHAMPTONSHIRE, ENGLAND.' ''A WORLD HISTORY ENCYCLOPEDIA,'' http://www.localhistories.org/northampton.html. Accessed 20 May 2018.||"
+                        "Lambert, Tim. 'A BRIEF HISTORY OF PETERBOROUGH.' ''A WORLD HISTORY ENCYCLOPEDIA,'' http://www.localhistories.org/peterborough.html. Accessed 20 May 2018.||"
+                        "Lambert, Tim. 'A BRIEF HISTORY OF SHEFFIELD, ENGLAND.' ''A WORLD HISTORY ENCYCLOPEDIA,'' http://www.localhistories.org/sheffield.html. Accessed 20 May 2018.||"
+                        "'Medieval Gloucester: The later middle ages.' ''British History Online.'' University of London, http://www.british-history.ac.uk/vch/glos/vol4/pp35-41. Accessed 20 May 2018.||"
+                        "'Medieval Leicester.' ''Medieval Research Centre.'' University of Leicester, https://www2.le.ac.uk/departments/mrc/medieval-leicester. Accessed 20 May 2018.||"
+                        "'St Mary's Bridge Chapel.' ''Discover Derby,'' http://www.derbyshire-peakdistrict.co.uk/cathedalbridgechapel.htm. Accessed 20 May 2018.||"
+                        "'The Magazine (Newarke Gateway).' ''Story of Leicester.'' Leicester City Council, http://www.storyofleicester.info/city-heritage/built-heritage/the-magazine-newarke-gateway/. Accessed 20 May 2018.||";
 
     while (g.draw())
     {
@@ -1313,6 +1393,16 @@ void PlayerData::endGame(Graphics& g)
         {
             if (e.evtType == EvtType::KeyPress && e.arg == 16777216)
             {
+                while (textYVal < 570)
+                {
+                    g.clear();
+
+                    printTextTwo(g, 15, textYVal, worksCited, WHITE,8);
+                    drawHUDs(g);
+                    textYVal = textYVal + velocity;
+                    g.draw(10);
+                }
+
                 g.setCloseOnExit(true);
                 return;
             }
