@@ -26,6 +26,7 @@ public:
     int spriteNumber;
     int spriteIterator;
     int rations;
+    double protection;
 
     PlayerData(double numberOfCompanions, std::vector<int> startingHealth, std::vector<int> startingMoney, std::vector<mssm::Image> walks);
     void drawCharacter(mssm::Graphics& g, bool walkCycleVal);
@@ -50,6 +51,7 @@ public:
     bool findItem(std::string itemToFind);
     void removeFromInventory(std::string itemToRemove, int quantityToRemove);
     void cleanseInventory();
+    void checkBrigands(mssm::Graphics& g, int chanceOfBrigands);
 };
 
 

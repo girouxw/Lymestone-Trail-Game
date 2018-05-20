@@ -17,8 +17,8 @@ using namespace mssm;
 void drawHUD(Graphics& g)
 {
     g.polygon({{10,570},{970,570},{970,670},{10,670}}, WHITE, BLACK);
-    g.polygon({{970,0},{g.width(), 0},{g.width(), 670},{970, 670}}, BLACK, BLACK);
-    g.polygon({{10,670},{g.width(),670},{g.height(),g.width()},{10, g.height()}}, BLACK, BLACK);
+    g.polygon({{970,0},{(double)g.width(), 0.0},{(double)g.width(), 670.0},{970, 670}}, BLACK, BLACK);
+    g.polygon({{10,670},{(double)g.width(),670.0},{(double)g.height(),(double)g.width()},{10.0, (double)g.height()}}, BLACK, BLACK);
     //g.polygon({{0,0},{20,0},{20,670},{0,670}},BLACK,BLACK);
     g.line(10,570,10,0, WHITE);
     g.line(970,570,970,0,WHITE);
@@ -205,7 +205,6 @@ void graphicsMain(Graphics& g)
         g.setCloseOnExit(true);
         return;
     }
-
     g.clear();
     drawHUD(g);
     bool travelling = false;
@@ -227,6 +226,17 @@ void graphicsMain(Graphics& g)
     double foodThreshold = 150 - player.travelPace*10;
     int dangerThreshold = player.difficulty * 40;
     double foodMultiplier = 1;
+    int chanceOfBrigands;
+
+    switch(player.difficulty)
+    {
+    case 3:
+        chanceOfBrigands = 70;
+        break;
+    case 2:
+        chanceOfBrigands = 35;
+        break;
+    }
 
     while (g.draw())
     {
@@ -239,7 +249,7 @@ void graphicsMain(Graphics& g)
 
             if (player.townNumber == 19)
             {
-                //player.endGame(g);
+                player.endGame(g);
                 g.setCloseOnExit(true);
                 return;
             }
@@ -284,25 +294,14 @@ void graphicsMain(Graphics& g)
             g.text(300,300,50,to_string(foodThreshold),RED);
             //g.draw(100);
 
-            if (checkDangerIterator >= dangerThreshold)
-            {
+            if (checkDangerIterator >= dangerThreshold) {
                 player.checkForBadness(g);
-                checkDangerIterator = 0;
-            }
-            else
-            {
-                checkDangerIterator += 1;
-            }
+                player.checkBrigands(g,chanceOfBrigands);
+                checkDangerIterator = 0; }
+            else{ checkDangerIterator += 1; }
 
-            if (foodIterator >= foodThreshold)
-            {
-                player.checkFood(g);
-                foodIterator = 0;
-            }
-            else
-            {
-                foodIterator += 1;
-            }
+            if (foodIterator >= foodThreshold){player.checkFood(g); foodIterator = 0;}
+            else { foodIterator += 1; }
 
             g.clear();
             g.image(20,0, land);
@@ -383,12 +382,11 @@ void graphicsMain(Graphics& g)
             playerX = 894;
             screenNumber = 1;
             travelling = false;
-            int i = g.randomInt(0,2);
+            int i = g.randomInt(0,1);
             if (i == 1)
             {
-
+                player.removeFromInventory("Horses", 1);
             }
-            player.removeFromInventory("Horses", 1);
         }
         else if (playerX < 20 && screenNumber < towns[player.townNumber].numOfScreens)
         {

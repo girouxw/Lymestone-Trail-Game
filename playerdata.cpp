@@ -28,6 +28,7 @@ PlayerData::PlayerData(double numberOfCompanions, std::vector<int> startingHealt
     spriteNumber = 0;
     spriteIterator = 0;
     rations = 3;
+    protection = 0;
 }
 
 bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& initialHeight)
@@ -36,11 +37,6 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
     double height = g.height();
     string stringWidth = to_string(width);
     string stringHeight = to_string(height);
-
-    vector<Item> startingShop = {{"Wheel", 20,{1,0,0,0}, "A simple Wheel"},
-                                 {"Axel", 21, {0,2,10,0}, "A wooden Axel used in carts and wagons"},
-                                 {"Cheese", 20, {0,1,0,0}, "Cheese!"}};
-    string startingShopDesc = "Welcome to Flynn's General Store! Buy Something Will 'Ya!";
 
     g.text(1300,100,10,stringWidth, WHITE);
     g.text(1300,115,10,stringHeight, WHITE);
@@ -62,7 +58,7 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
         exitButton.draw(g, "Exit Game", 15);
         startButton.draw(g, "Start Game", 15);
 
-        int p;
+        int p = 0;
 
         while (g.draw())
         {
@@ -76,6 +72,7 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
                     }
                     if (startButton.isButtonPressed(e))
                     {
+                        cout << "Selecting";
                         selectDifficulty(g);
                         selectCharacters(g);
                         //selectPath(g);
@@ -650,6 +647,87 @@ double PlayerData::changeRations(mssm::Graphics& g)
     }
 }
 
+void PlayerData::checkBrigands(Graphics &g, int chanceOfBrigands)
+{
+    Button pay = {{300,235},{380, 295}};
+    Button giveUp = {{400,235},{480,295}};
+
+    if (findItem("Knight"))
+    {
+        for (int i = 0; i < inventory.size(); ++i)
+        {
+            if (inventory[i].itemName == "Knight")
+            {
+                protection = inventory[i].quantity * 10;
+
+                if (difficulty == 3)
+                {
+                    if (protection >= 70)
+                    {
+                        protection = 69;
+                    }
+                }
+                if (difficulty == 2)
+                {
+                    if (protection >= 35)
+                    {
+                        protection = 34;
+                    }
+                }
+            }
+        }
+    }
+
+    int trueChance  = chanceOfBrigands - protection;
+    int rand = g.randomInt(1,100);
+    if (rand <= trueChance)
+    {
+        int toTake = g.randomInt(1,100);
+        g.polygon({{295,100},{695,100},{695,300},{295,300}},WHITE,BLACK);
+        string moneyOr = "Your Money or Your Life!|We Want ";
+        moneyOr.append(to_string(toTake));
+        moneyOr.append(" Pounds.");
+        printTextTwo(g, 300,120,moneyOr,WHITE);
+        if (protection != 0)
+        {
+            for (int i = 0; i < inventory.size(); ++i)
+            {
+                if (inventory[i].itemName == "Knight")
+                {
+                    inventory[i].quantity -= 1;
+                    break;
+                }
+            }
+        }
+        if (money[0] >= toTake)
+        {
+            pay.draw(g,"Pay",15);
+        }
+        giveUp.draw(g,"Give Up",15);
+
+        while (g.draw())
+        {
+            for (const Event& e : g.events())
+            {
+                if (e.evtType == EvtType::MousePress)
+                {
+                    if (pay.isButtonPressed(e) && money[0] >= toTake)
+                    {
+                        money[0] -= toTake;
+                        return;
+                    }
+                    if (giveUp.isButtonPressed(e))
+                    {
+                        int ra = g.randomInt(0,3);
+                        companionHealth[ra] -= 10;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
+
 void PlayerData::checkForBadness(mssm::Graphics& g)
 {
     Button back = {{600,120},{690,200}};
@@ -801,7 +879,7 @@ int getNumber(Graphics& g, double x, double y, double size)
         {
             if (e.evtType == EvtType::KeyPress)
             {
-                if (e.arg == 16777220) //Enter
+                if (e.arg == 16777220 && name.size() != 0) //Enter
                 {
                     int num;
                     stringstream stringToNum(name);
@@ -1224,7 +1302,7 @@ int readyToStart(mssm::Graphics& g)
     return 0;
 }
 
-void endGame (Graphics& g)
+void PlayerData::endGame(Graphics& g)
 {
     g.clear();
     g.text(50,50,50,"You Win!", PURPLE);
