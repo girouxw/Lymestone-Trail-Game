@@ -13,6 +13,7 @@ public:
 
     Button(Vec2d topL,Vec2d botR);
 
+    void draw(mssm::Graphics& g, std::string text, int size, mssm::Color color);
     void draw(mssm::Graphics& g, std::string text, int size);
     bool isButtonPressed(const mssm::Event& e);
 

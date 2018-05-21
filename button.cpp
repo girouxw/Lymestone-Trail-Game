@@ -10,6 +10,17 @@ Button::Button(Vec2d topL, Vec2d botR)
     bottomRight = botR;
 }
 
+void Button::draw(mssm::Graphics& g, std::string text, int size, Color color)
+{
+    vector<Vec2d> pts = {{topLeft.x, topLeft.y},
+                         {bottomRight.x, topLeft.y},
+                         {bottomRight.x, bottomRight.y},
+                         {topLeft.x, bottomRight.y}};
+
+    g.polygon(pts, color, TRANSPARENT);
+    g.text(topLeft.x + 20, (topLeft.y + bottomRight.y)/2 + size/3, size, text, color);
+}
+
 void Button::draw(mssm::Graphics& g, std::string text, int size)
 {
     vector<Vec2d> pts = {{topLeft.x, topLeft.y},

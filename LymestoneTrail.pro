@@ -32,7 +32,31 @@ DISTFILES += \
     data/land6.png \
     data/walk1.png \
     data/walk2.png \
-    data/walk3.png
+    data/walk3.png \
+    data/banbury.png \
+    data/birmingham.png \
+    data/bristol.png \
+    data/cambridge.png \
+    data/canterbury.png \
+    data/chester.png \
+    data/derby.png \
+    data/gloucester \
+    data/hereford.png \
+    data/leicester.png \
+    data/london.png \
+    data/lymestone.png \
+    data/manchester.png \
+    data/northampton.png \
+    data/nottingham.png \
+    data/oxford.png \
+    data/oxford2.png \
+    data/penkhull.png \
+    data/peterborough.png \
+    data/swindon.png \
+    data/sheffield.png \
+    data/titleScreen.png \
+
+
 
 
 ASSETS_DIR = data

@@ -1,6 +1,6 @@
 #include "town.h"
 
-Town::Town(int townNum, std::string name, std::string townDescrip, std::vector<Item> shoppe, std::string shopDescrip, std::vector<int> placesToGo, int dangerLev, int numberOfScreens)
+Town::Town(int townNum, std::string name, std::string townDescrip, std::vector<Item> shoppe, std::string shopDescrip, std::vector<int> placesToGo, int dangerLev, int numberOfScreens, mssm::Image townPicture)
 {
     townNumber = townNum;
     townName = name;
@@ -10,4 +10,5 @@ Town::Town(int townNum, std::string name, std::string townDescrip, std::vector<I
     canGoTo = placesToGo;
     dangerLevel = dangerLev;
     numOfScreens = numberOfScreens;
+    townPic = townPicture;
 }

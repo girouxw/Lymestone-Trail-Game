@@ -17,14 +17,13 @@ public:
     std::vector<int> canGoTo;
     int dangerLevel;
     int numOfScreens;
+    mssm::Image townPic;
 
 
 
 
 
-    Town(int townNum, std::string name, std::string townDescrip, std::vector<Item> shoppe,
-         std::string shopDescrip, std::vector<int> placesToGo, int dangerLev,
-         int numberOfScreens);
+    Town(int townNum, std::string name, std::string townDescrip, std::vector<Item> shoppe,std::string shopDescrip, std::vector<int> placesToGo, int dangerLev,int numberOfScreens, mssm::Image townPicture);
 };
 
 #endif // TOWN_H

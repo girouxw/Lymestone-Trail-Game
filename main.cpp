@@ -53,17 +53,29 @@ void printText(Graphics& g, int x, int y, string text, Color textColor)
 bool town(Graphics& g, PlayerData& player, Town& town)
 {
     int textYVal = 0;
-    int velocity = 5;
+    int velocity = 1;
 
-    while (textYVal < 570)
+    while (textYVal < 600)
     {
+        for (const Event& e : g.events())
+        {
+            if (e.evtType == EvtType::KeyPress && e.arg == 70)
+            {
+                velocity = 10;
+            }
+            else
+            {
+                velocity = 1;
+            }
+        }
         g.clear();
+        g.image(15,0,town.townPic);
+        printText(g, 485, textYVal, town.townName, PURPLE);
+        printText(g, 485, textYVal+30, town.townDesc, BLACK);
 
-        printText(g, 15, textYVal, town.townName, PURPLE);
-        printText(g, 15, textYVal+30, town.townDesc, WHITE);
         drawHUD(g);
         textYVal = textYVal + velocity;
-        g.draw(10);
+        g.draw(1);
     }
     Button moveOn = {{30, 590},{150,650}};
     Button shop = {{170,590},{290,650}};
@@ -105,6 +117,7 @@ bool town(Graphics& g, PlayerData& player, Town& town)
                 {
                     player.shop(g,town.shop,town.shopDesc);
                     g.clear();
+                    g.image(20,0,town.townPic);
                     drawHUD(g);
                     moveOn.draw(g, "Head Out", 15);
                     shop.draw(g,"Shop",15);
@@ -113,7 +126,13 @@ bool town(Graphics& g, PlayerData& player, Town& town)
                 }
                 if (talk.isButtonPressed(e))
                 {
-                    player.conversation(g); //DEFINE ----------------------------------------------------------------
+                    player.conversation(g);
+                    drawHUD(g);
+                    g.image(20,0,town.townPic);
+                    moveOn.draw(g, "Head Out", 15);
+                    shop.draw(g,"Shop",15);
+                    talk.draw(g,"Talk",15);
+                    inventory.draw(g,"Inventory",15);
                 }
                 if (inventory.isButtonPressed(e))
                 {
@@ -123,11 +142,11 @@ bool town(Graphics& g, PlayerData& player, Town& town)
                     }
                     g.clear();
                     drawHUD(g);
+                    g.image(20,0,town.townPic);
                     moveOn.draw(g, "Head Out", 15);
                     shop.draw(g,"Shop",15);
                     talk.draw(g,"Talk",15);
                     inventory.draw(g,"Inventory",15);
-
                 }
             }
         }
@@ -143,46 +162,46 @@ void graphicsMain(Graphics& g)
     vector<Item> standardShop = {cheese, knight,horse};
     string generalStoreDescrip = "The general store is before you.";
 
-    Town lymestone = {0, "Lymestone", "Trees gently sway as the mountains dwarf this small town to the east of Lancaster.|This is the town in which your adventure will begin.",
-                      standardShop, generalStoreDescrip, {1,2}, -1, 2};
+    Town lymestone = {0, "Lymestone", "Trees gently sway as the mountains|dwarf this small town to the east of Lancaster.|This is the town in which your adventure will begin.",
+                      standardShop, generalStoreDescrip, {1,2}, -1, 2, Image("lymestone.png")};
     Town sheffield = {1, "Sheffield", "As you emerge from a grove of trees, you see|Sheffield sprawling out in front of you.|People walk around what looks to be|a weekly market.", standardShop,
-                      generalStoreDescrip, {0,2,4,5,6}, 1, 3};
+                      generalStoreDescrip, {0,2,4,5,6}, 1, 3, Image("sheffield.png")};
     Town manchester = {2, "Manchester", "As you crest a grassy knoll,|the settlement of Manchester sprawls| out below you.||The town Reeve seems to be speaking|with a local farmer as you|walk into the town", standardShop,
-                       "The general store is before you.", {0,1,3,4}, 1, 4};
+                       "The general store is before you.", {0,1,3,4}, 1, 4, Image("manchester.png")};
     Town chester = {3, "Chester", "This village sits quietly.|You enjoyed the view of the sea you got|on your way here and, in fact, you can|now see the docks, bereft of|workers.", standardShop,
-                   generalStoreDescrip, {2,4}, 2, 4};
+                   generalStoreDescrip, {2,4}, 2, 4, Image("chester.png")};
     Town penkhull = {4, "Penkhull", "The sprawling fields of this|farming town lay before you|as you come upon the main|buildings that make up|Penkhull",
-                     standardShop, generalStoreDescrip, {1,2,3,5,7}, 2, 4};
+                     standardShop, generalStoreDescrip, {1,2,3,5,7}, 2, 4, Image("penkhull.png")};
     Town derby = {5, "Derby", "As you cross the bridge into Derby,|you see the newly built Cathedral|sitting next to it.||People are coming in and out; you must have gotten here just|after matins",
-                  standardShop, generalStoreDescrip, {1,2,4,6,7}, 2, 5};
+                  standardShop, generalStoreDescrip, {1,2,4,6,7}, 2, 5, Image("derby.png")};
     Town nottingham = {6, "Nottingham", "Nottingham Castle sits above the other|buildings in this town.|You see people going about their business|throughout the streets.||You must have arrived at a busy time|of the day.",
-                       standardShop, generalStoreDescrip, {1,5,7}, 2, 4};
+                       standardShop, generalStoreDescrip, {1,5,7}, 2, 4,Image("nottingham.png")};
     Town birmingham = {7, "Birmingham", "The smell of smoke hits you as|you crest the hill between|you and the town of Birmingham.||As you look over the city, you|see several buildings are|charred and half destroyed;|they must be recovering from a fire.",
-                       standardShop, generalStoreDescrip, {4,5,6,8,9,10,11,12}, 3, 5};
+                       standardShop, generalStoreDescrip, {4,5,6,8,9,10,11,12}, 3, 5,Image("birmingham.png")};
     Town leicester = {8, "Leicester", "As you walk through this town,|you see some artisans working on|building a large gateway in|front of Leicester Castle.|Apparently, it is to be called|The Magazine.",
-                      standardShop, generalStoreDescrip, {5,6,7,12,13}, 3, 4};
+                      standardShop, generalStoreDescrip, {5,6,7,12,13}, 3, 4,Image("leicester.png")};
     Town hereford = {9, "Hereford", "As you all pass through this| town, you see people coming|in and out of a Cathedral|marked as a Grammar School.",
-                     standardShop, generalStoreDescrip, {7,10}, 8, 5};
+                     standardShop, generalStoreDescrip, {7,10}, 8, 5,Image("hereford.png")};
     Town gloucester = {10, "Gloucester", "As you passe throug Gloucester,|you starte to| see cartes and|whorses bring corne in an'|out of the toun.",
-                       standardShop, generalStoreDescrip, {7,9,14,15}, 5, 4};
+                       standardShop, generalStoreDescrip, {7,9,14,15}, 5, 4,Image("gloucester.png")};
     Town banbury = {11, "Banbury", "While passing throug the towne|of Banbury, you are astaunded|to see a surplus of chease for|sale in the marquet. In pardiculaar,|yeou see one weel thate|is 80lbs.",
-                    standardShop, generalStoreDescrip, {7,10,12,16}, 2, 2};
+                    standardShop, generalStoreDescrip, {7,10,12,16}, 2, 2,Image("banbury.png")};
     Town northampton = {12, "Northampton", "As you passe throug Northampton| you arre shoked to|witnes neumerus billdings in ruin and|disrapair. They must be|sufering economicaly.",
-                         standardShop, generalStoreDescrip, {7,8,11,13,17}, 6, 4};
+                         standardShop, generalStoreDescrip, {7,8,11,13,17}, 6, 4,Image("northampton.png")};
     Town peterborough = {13, "Peterborough", "You hafe to doge som|faling rocs as you passe by|the site of the construcshon|of St. John the Baptist.|The rest of the towne is|farely com thoug",
-                         standardShop, generalStoreDescrip, {8,12}, 1, 6};
+                         standardShop, generalStoreDescrip, {8,12}, 1, 6,Image("peterborough.png")};
     Town bristol = {14, "Bristol", "Won of the moste imbrezife|theengs youve sean ly|bephore you in the centre|ef Bristol. This is thee|High Cross ef Bristol",
-                    standardShop, generalStoreDescrip, {10}, 9, 4};
+                    standardShop, generalStoreDescrip, {10}, 9, 4,Image("bristol.png")};
     Town swindon = {15, "Swindon", "As oou pas throg te striets|of Swindon, oou here|wispers of the|lejend of the Dred Pirat|Yarmin Swindleson",
-                    standardShop, generalStoreDescrip, {10,14,16}, 5, 3};
+                    standardShop, generalStoreDescrip, {10,14,16}, 5, 3,Image("swindon.png")};
     Town oxford = {16, "Oxford", "Ae wyse robed scolere|pears at oou from the|windo of the Unifersetie|Colage Oxford",
-                   standardShop, generalStoreDescrip, {11,15,17,18}, 7, 3};
+                   standardShop, generalStoreDescrip, {11,15,17,18}, 7, 3,Image("oxford.png")};
     Town cambridge = {17, "Cambridge", "Fron the nunber ef|tapistrees an weevars,|thes towne seams to bee|kuite relient en thee|wool indestree.",
-                      standardShop, generalStoreDescrip, {12,13,18}, 4,4};
+                      standardShop, generalStoreDescrip, {12,13,18}, 4,4,Image("cambridge.png")};
     Town london = {18, "London", "The Tower of London|kaches yur ey|befor anying alse en thee|towne of London. Yu arr|almest too Canterbury!",
-                   standardShop, generalStoreDescrip, {16,17,19}, 6, 3};
+                   standardShop, generalStoreDescrip, {16,17,19}, 6, 3,Image("london.png")};
     Town canterbury = {19, "Canterbury", "As the tomb of|Thomas Becket comes|into view, along with the|Cathedral at Canterbury, you|know that you have|finally made it. You have|completed your pilgramage!|||||But wait...|now you have to go back.||Uh Oh...",
-                       standardShop, generalStoreDescrip, {18}, 10, 5};
+                       standardShop, generalStoreDescrip, {18}, 10, 5,Image("canterbury.png")};
 
     vector<Town> towns = {lymestone, sheffield, manchester, chester, penkhull, derby, nottingham,
                           birmingham, leicester, hereford, gloucester, banbury, northampton, peterborough,
@@ -217,6 +236,25 @@ void graphicsMain(Graphics& g)
         g.setCloseOnExit(true);
         return;
     }
+
+    if (player.companionNames[0] == "outlaw")
+    {
+        player.difficulty = 0;
+        player.money[0] = 0;
+    }
+    if (player.companionNames[1] == "yarmin")
+    {
+        player.money[0] = 500;
+    }
+    if (player.companionNames[2] == "mikeynducklings")
+    {
+        player.townNumber = 16;
+    }
+    if (player.companionNames[3] == "ght678i")
+    {
+        player.townNumber = 19;
+    }
+
     g.clear();
     drawHUD(g);
     bool travelling = false;
@@ -243,10 +281,13 @@ void graphicsMain(Graphics& g)
     switch(player.difficulty)
     {
     case 3:
-        chanceOfBrigands = 70;
+        chanceOfBrigands = 50;
         break;
     case 2:
-        chanceOfBrigands = 35;
+        chanceOfBrigands = 10;
+        break;
+    case 1:
+        chanceOfBrigands = 99;
         break;
     }
 
@@ -303,9 +344,6 @@ void graphicsMain(Graphics& g)
         {
             player.cleanseInventory();
             foodThreshold = (150 - player.travelPace*10)*foodMultiplier;
-            g.text(300,300,50,to_string(foodThreshold),RED);
-            //g.draw(100);
-
             if (checkDangerIterator >= dangerThreshold) {
                 player.checkForBadness(g);
                 player.checkBrigands(g,(int)chanceOfBrigands);

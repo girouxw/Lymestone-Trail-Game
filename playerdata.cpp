@@ -35,11 +35,6 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
 {
     double width = g.width();
     double height = g.height();
-    string stringWidth = to_string(width);
-    string stringHeight = to_string(height);
-
-    g.text(1300,100,10,stringWidth, WHITE);
-    g.text(1300,115,10,stringHeight, WHITE);
 
     if (width != initialWidth || height != initialHeight)
     {
@@ -48,15 +43,14 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
         initialWidth = width;
         g.setBackground(BLACK);
         g.draw();
+        g.image(15,0,Image("titleScreen.png"));
         g.text(20, 100, 100, "Canterbury Trail", PURPLE);
-        g.line({970,0},{970,650}, WHITE);
-        g.line({0,650},{970,650}, WHITE);
 
         Button startButton = {{20,130},{185,165}};
         Button exitButton = {{200,130},{365,165}};
 
-        exitButton.draw(g, "Exit Game", 15);
-        startButton.draw(g, "Start Game", 15);
+        exitButton.draw(g, "Exit Game", 15, BLACK);
+        startButton.draw(g, "Start Game", 15, BLACK);
 
         int p = 0;
 
@@ -75,7 +69,6 @@ bool PlayerData::titleScreen(mssm::Graphics& g, double& initialWidth, double& in
                         cout << "Selecting";
                         selectDifficulty(g);
                         selectCharacters(g);
-                        //selectPath(g);
                         p = 1;
                     }
                 }
@@ -233,19 +226,14 @@ void PlayerData::selectCharacters(mssm::Graphics& g)
     g.text(15,34,18,"What are your names?", PURPLE);
 
     g.text(15, 55, 18, "Pilgrim 1:", WHITE);
-    g.text(15, 71, 18, "Pilgrim 2:", WHITE);
-    g.text(15, 87, 18, "Pilgrim 3:", WHITE);
-    g.text(15, 103, 18, "Pilgrim 4:", WHITE);
+    g.text(15, 75, 18, "Pilgrim 2:", WHITE);
+    g.text(15, 95, 18, "Pilgrim 3:", WHITE);
+    g.text(15, 115, 18, "Pilgrim 4:", WHITE);
     companionNames[0] = getText(g, 95, 55, 18);
-    companionNames[1] = getText(g, 95, 71, 18);
-    companionNames[2] = getText(g, 95, 87, 18);
-    companionNames[3] = getText(g, 95, 103, 18);
+    companionNames[1] = getText(g, 95, 75, 18);
+    companionNames[2] = getText(g, 95, 95, 18);
+    companionNames[3] = getText(g, 95, 115, 18);
     g.clear();
-
-    if (companionNames[0] == "outlaw")
-    {
-        endGame(g);
-    }
 
     return;
 }
@@ -266,188 +254,154 @@ string getText(Graphics& g, double x, double y, double size)
 
                 if (e.arg == 65) //a
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "a", WHITE);
                     name.push_back('a');
                 }
                 else if (e.arg == 66) // b
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "b", WHITE);
                     name.push_back('b');
                 }
                 else if (e.arg == 67) // etc...
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "c", WHITE);
                     name.push_back('c');
                 }
                 else if (e.arg == 68)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "d", WHITE);
                     name.push_back('d');
                 }
                 else if (e.arg == 69)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "e", WHITE);
                     name.push_back('e');
                 }
                 else if (e.arg == 70)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "f", WHITE);
                     name.push_back('f');
                 }
                 else if (e.arg == 71)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "g", WHITE);
                     name.push_back('g');
                 }
                 else if (e.arg == 72)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "h", WHITE);
                     name.push_back('h');
                 }
                 else if (e.arg == 73)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "i", WHITE);
                     name.push_back('i');
                 }
                 else if (e.arg == 74)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "j", WHITE);
                     name.push_back('j');
                 }
                 else if (e.arg == 75)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "k", WHITE);
                     name.push_back('k');
                 }
                 else if (e.arg == 76)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "l", WHITE);
                     name.push_back('l');
                 }
                 else if (e.arg == 77)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "m", WHITE);
                     name.push_back('m');
                 }
                 else if (e.arg == 78)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "n", WHITE);
                     name.push_back('n');
                 }
                 else if (e.arg == 79)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "o", WHITE);
                     name.push_back('o');
                 }
                 else if (e.arg == 80)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "p", WHITE);
                     name.push_back('p');
                 }
                 else if (e.arg == 81)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "q", WHITE);
                     name.push_back('q');
                 }
                 else if (e.arg == 82)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "r", WHITE);
                     name.push_back('r');
                 }
                 else if (e.arg == 83)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "s", WHITE);
                     name.push_back('s');
                 }
                 else if (e.arg == 84)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "t", WHITE);
                     name.push_back('t');
                 }
                 else if (e.arg == 85)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "u", WHITE);
                     name.push_back('u');
                 }
                 else if (e.arg == 86)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "v", WHITE);
                     name.push_back('v');
                 }
                 else if (e.arg == 87)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "w", WHITE);
                     name.push_back('w');
                 }
                 else if (e.arg == 88)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "x", WHITE);
                     name.push_back('x');
                 }
                 else if (e.arg == 89)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "y", WHITE);
                     name.push_back('y');
                 }
                 else if (e.arg == 90)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "z", WHITE);
                     name.push_back('z');
                 }
                 else if (e.arg == 48)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "0", WHITE);
                     name.push_back('0');
                 }
                 else if (e.arg == 49)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "1", WHITE);
                     name.push_back('1');
                 }
                 else if (e.arg == 50)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "2", WHITE);
                     name.push_back('2');
                 }
                 else if (e.arg == 51)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "3", WHITE);
                     name.push_back('3');
                 }
                 else if (e.arg == 52)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "4", WHITE);
                     name.push_back('4');
                 }
                 else if (e.arg == 53)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "5", WHITE);
                     name.push_back('5');
                 }
                 else if (e.arg == 54)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "6", WHITE);
                     name.push_back('6');
                 }
                 else if (e.arg == 55)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "7", WHITE);
                     name.push_back('7');
                 }
                 else if (e.arg == 56)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "8", WHITE);
                     name.push_back('8');
                 }
                 else if (e.arg == 57)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "9", WHITE);
                     name.push_back('9');
                 }
-                else
+                else if (e.arg == 16777219)
                 {
-
+                    name.pop_back();
                 }
+                g.polygon({{x,y+5},{x+100,y+5},{x+100,y-size+5},{x,y-size+5}},BLACK,BLACK);
+                g.text(x, y, size, name, WHITE);
             }
         }
     }
@@ -665,16 +619,16 @@ void PlayerData::checkBrigands(Graphics& g, int chanceOfBrigands)
 
                 if (difficulty == 3)
                 {
-                    if (protection >= 70)
+                    if (protection >= 50)
                     {
-                        protection = 69;
+                        protection = 49;
                     }
                 }
                 if (difficulty == 2)
                 {
-                    if (protection >= 35)
+                    if (protection >= 10)
                     {
-                        protection = 34;
+                        protection = 9;
                     }
                 }
             }
@@ -896,59 +850,50 @@ int getNumber(Graphics& g, double x, double y, double size)
 
                 else if (e.arg == 48)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "0", WHITE);
                     name.push_back('0');
                 }
                 else if (e.arg == 49)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "1", WHITE);
                     name.push_back('1');
                 }
                 else if (e.arg == 50)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "2", WHITE);
                     name.push_back('2');
                 }
                 else if (e.arg == 51)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "3", WHITE);
                     name.push_back('3');
                 }
                 else if (e.arg == 52)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "4", WHITE);
                     name.push_back('4');
                 }
                 else if (e.arg == 53)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "5", WHITE);
                     name.push_back('5');
                 }
                 else if (e.arg == 54)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "6", WHITE);
                     name.push_back('6');
                 }
                 else if (e.arg == 55)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "7", WHITE);
                     name.push_back('7');
                 }
                 else if (e.arg == 56)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "8", WHITE);
                     name.push_back('8');
                 }
                 else if (e.arg == 57)
                 {
-                    g.text(x+(name.size() * size *.667), y, size, "9", WHITE);
                     name.push_back('9');
                 }
-                else
+                else if (e.arg == 16777219)
                 {
-
+                    name.pop_back();
                 }
-
+                g.polygon({{x,y},{x+100,y},{x+100,y-size+5},{x,y-size+5}},BLACK,BLACK);
+                g.text(x, y, size, name, WHITE);
             }
         }
     }
@@ -1369,10 +1314,14 @@ void PlayerData::endGame(Graphics& g)
     g.text(50,50,50,"You Win!", PURPLE);
     g.text(50,100, 15, "Press Escape to Proceed", WHITE);
 
-    int textYVal = 0;
-    int velocity = 5;
+    int textYVal = 590;
+    int velocity = 3;
 
-    string worksCited = "Dargue, William. 'A Brief History of Birmingham.' ''A History of BIRMINGHAM Places & Placenames from A to Y.'' William Dargue, |   https://billdargue.jimdo.com/glossary-brief-histories/a-brief-history-of-birmingham/medieval-birmingham/. Accessed 20 May 2018.||"
+    string worksCited = "Works Cited:|||"
+                        "'Bishops' House, Sheffield.' ''Folk and Honey'', 2014. PNG.||"
+                        "‘Chester Castle’ '‘Chester Tourist’', 2017. PNG.||"
+                        "Dargue, William. 'A Brief History of Birmingham.' ''A History of BIRMINGHAM Places & Placenames from A to Y.'' William Dargue, |   https://billdargue.jimdo.com/glossary-brief-histories/a-brief-history-of-birmingham/medieval-birmingham/. Accessed 20 May 2018.||"
+                        "‘Derby – Chapel of St Mary on the Bridge.’ '‘Northernvicar’s Blog’', 3 Mar. 2018. PNG.||"
                         "Lambert, Tim. 'A BRIEF HISTORY OF BANBURY, OXFORDSHIRE, ENGLAND, ENGLAND.' ''A WORLD HISTORY ENCYCLOPEDIA,'' http://www.localhistories.org/banbury.html. Accessed 20 May 2018.||"
                         "Lambert, Tim. 'A BRIEF HISTORY OF BRISTOL, ENGLAND.' ''A WORLD HISTORY ENCYCLOPEDIA,'' http://www.localhistories.org/bristol.html. Accessed 20 May 2018.||"
                         "Lambert, Tim. 'A BRIEF HISTORY OF CAMBRIDGE, ENGLAND.' ''A WORLD HISTORY ENCYCLOPEDIA,'' http://www.localhistories.org/cambridge.html. Accessed 20 May 2018.||"
@@ -1384,8 +1333,12 @@ void PlayerData::endGame(Graphics& g)
                         "Lambert, Tim. 'A BRIEF HISTORY OF SHEFFIELD, ENGLAND.' ''A WORLD HISTORY ENCYCLOPEDIA,'' http://www.localhistories.org/sheffield.html. Accessed 20 May 2018.||"
                         "'Medieval Gloucester: The later middle ages.' ''British History Online.'' University of London, http://www.british-history.ac.uk/vch/glos/vol4/pp35-41. Accessed 20 May 2018.||"
                         "'Medieval Leicester.' ''Medieval Research Centre.'' University of Leicester, https://www2.le.ac.uk/departments/mrc/medieval-leicester. Accessed 20 May 2018.||"
+                        "’Nottingham Castle.’ ‘'Painting and Frame’', c. 1500-1600. PNG.||"
                         "'St Mary's Bridge Chapel.' ''Discover Derby,'' http://www.derbyshire-peakdistrict.co.uk/cathedalbridgechapel.htm. Accessed 20 May 2018.||"
-                        "'The Magazine (Newarke Gateway).' ''Story of Leicester.'' Leicester City Council, http://www.storyofleicester.info/city-heritage/built-heritage/the-magazine-newarke-gateway/. Accessed 20 May 2018.||";
+                        "'The Magazine (Newarke Gateway).' ''Story of Leicester.'' Leicester City Council, http://www.storyofleicester.info/city-heritage/built-heritage/the-magazine-newarke-gateway/. Accessed 20 May 2018.||"
+                        "‘University College, Oxford.’ '‘UniverstiyRooms’', 2018. PNG.||"
+                        "‘Weyker, Bob.' ''Eight stunning castles and towers you can visit within a 90 minute drive of Greater Manchester’', 19 Jun. 2015. PNG.||||||||||||||||||||||"
+                        "Cast and Crew: |||Inspirational Director:            Mike McCartney||Art Director:           Annie Giroux||Quality Assurance:          ??????||Programming and Gameplay Director:            Wyatt Giroux||||Thank you for playing 'Canterbury Trail' open Beta v1.0!";
 
     while (g.draw())
     {
@@ -1393,13 +1346,23 @@ void PlayerData::endGame(Graphics& g)
         {
             if (e.evtType == EvtType::KeyPress && e.arg == 16777216)
             {
-                while (textYVal < 570)
+                while (textYVal > -1500)
                 {
+                    for (const Event& e : g.events())
+                    {
+                        if (e.evtType == EvtType::KeyPress && e.arg == 70)
+                        {
+                            velocity = 10;
+                        }
+                        else
+                        {
+                            velocity = 1;
+                        }
+                    }
                     g.clear();
-
-                    printTextTwo(g, 15, textYVal, worksCited, WHITE,8);
+                    printTextTwo(g, 15, textYVal, worksCited, WHITE,10);
                     drawHUDs(g);
-                    textYVal = textYVal + velocity;
+                    textYVal = textYVal - velocity;
                     g.draw(10);
                 }
 
